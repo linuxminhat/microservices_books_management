@@ -15,7 +15,7 @@ export const Navbar = () => {
   return (
     <nav className='navbar navbar-expand-lg navbar-dark main-color py-3'>
       <div className='container-fluid'>
-        <span className='navbar-brand'>Luv 2 Read</span>
+      <Link className='navbar-brand' to='/home'>CFC Books Management Project</Link>
         <button className='navbar-toggler' type='button'
           data-bs-toggle='collapse' data-bs-target='#navbarNavDropdown'
           aria-controls='navbarNavDropdown' aria-expanded='false'

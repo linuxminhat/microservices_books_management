@@ -1,7 +1,7 @@
 export const oktaConfig = {
-    clientId: 'test-client-id',
-    issuer: 'https://dev-test.okta.com/oauth2/default',
-    redirectUri: 'https://localhost:3000/login/callback',
+    clientId: 'pqpr0xwrGMnEyTu0fXpBUv2Ns4l39Jvb',
+    issuer: 'https://dev-duedowvrhmjgcagi.jp.auth0.com',
+    redirectUri: 'http://localhost:3000/login/callback',
     scopes: ['openid', 'profile', 'email'],
     pkce: true,
     disableHttpsCheck: true,
