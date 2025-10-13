@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>com.luv2code</groupId>
-    <artifactId>review-service</artifactId>
+    <artifactId>message-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>review-service</name>
+    <name>message-service</name>
 
     <properties>
         <java.version>21</java.version>
