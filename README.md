@@ -1,1 +1,20 @@
 # cfctechs_internship_project
+# Hướng Dẫn Khởi Động Hệ Thống Spring Cloud
+
+## Chuẩn Bị Database
+
+Tạo các database trong **MySQL**:
+
+```sql
+CREATE DATABASE mylibrarydb;
+CREATE DATABASE bookdb;
+``` 
+## Khởi Động Config Server
+cd config-server
+mvn spring-boot:run
+Kiểm tra hoạt động : http://localhost:8888
+
+## Khởi Động Eureka Server
+cd eureka-server
+mvn spring-boot:run
+Kiểm tra hoạt động tại: http://localhost:8761
