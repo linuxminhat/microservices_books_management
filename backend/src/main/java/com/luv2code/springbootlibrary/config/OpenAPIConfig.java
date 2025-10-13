@@ -17,7 +17,7 @@ public class OpenAPIConfig {
                         .version("1.0")
                         .description("API documentation for Spring Boot Library project")
                         .contact(new Contact()
-                                .name("SmartDev Team")
-                                .email("support@smartdev.com")));
+                                .name("CFC intern")
+                                .email("support@cfctechs.com")));
     }
 }

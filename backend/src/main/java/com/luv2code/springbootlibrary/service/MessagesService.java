@@ -24,6 +24,7 @@ public class MessagesService {
         Message message = new Message(messageRequest.getTitle(), messageRequest.getQuestion());
         message.setUserEmail(userEmail);
         messageRepository.save(message);
+
     }
 
     public void putMessage(AdminQuestionRequest adminQuestionRequest, String userEmail) throws Exception {
@@ -36,6 +37,7 @@ public class MessagesService {
         message.get().setResponse(adminQuestionRequest.getResponse());
         message.get().setClosed(true);
         messageRepository.save(message.get());
+
     }
 
 }

@@ -66,6 +66,7 @@ public class BookService {
         } else {
             return false;
         }
+
     }
 
     public int currentLoansCount(String userEmail) {
@@ -116,9 +117,7 @@ public class BookService {
         if (!book.isPresent() || validateCheckout == null) {
             throw new Exception("Book does not exist or not checked out by user");
         }
-
         book.get().setCopiesAvailable(book.get().getCopiesAvailable() + 1);
-
         bookRepository.save(book.get());
         checkoutRepository.deleteById(validateCheckout.getId());
 

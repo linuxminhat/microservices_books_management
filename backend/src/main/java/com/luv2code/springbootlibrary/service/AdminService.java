@@ -20,8 +20,7 @@ public class AdminService {
     private CheckoutRepository checkoutRepository;
 
     @Autowired
-    public AdminService(BookRepository bookRepository,
-            ReviewRepository reviewRepository,
+    public AdminService(BookRepository bookRepository, ReviewRepository reviewRepository,
             CheckoutRepository checkoutRepository) {
         this.bookRepository = bookRepository;
         this.reviewRepository = reviewRepository;
@@ -38,7 +37,6 @@ public class AdminService {
 
         book.get().setCopiesAvailable(book.get().getCopiesAvailable() + 1);
         book.get().setCopies(book.get().getCopies() + 1);
-
         bookRepository.save(book.get());
     }
 
@@ -75,7 +73,6 @@ public class AdminService {
         if (!book.isPresent()) {
             throw new Exception("Book not found");
         }
-
         bookRepository.delete(book.get());
         checkoutRepository.deleteAllByBookId(bookId);
         reviewRepository.deleteAllByBookId(bookId);

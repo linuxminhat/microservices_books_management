@@ -25,6 +25,7 @@ public class Book {
     @Column(name = "copies")
     private int copies;
 
+    // Borrowed book
     @Column(name = "copies_available")
     private int copiesAvailable;
 

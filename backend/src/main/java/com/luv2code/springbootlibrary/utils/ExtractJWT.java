@@ -2,7 +2,7 @@ package com.luv2code.springbootlibrary.utils;
 
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Map;//storing key-value 
 
 public class ExtractJWT {
 
@@ -14,7 +14,6 @@ public class ExtractJWT {
         Base64.Decoder decoder = Base64.getUrlDecoder();
 
         String payload = new String(decoder.decode(chunks[1]));
-
         String[] entries = payload.split(",");
         Map<String, String> map = new HashMap<String, String>();
 

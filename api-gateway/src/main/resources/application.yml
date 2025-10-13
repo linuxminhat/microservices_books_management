@@ -1,0 +1,62 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: "configserver:http://localhost:8888"
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: book-service
+          uri: lb://book-service
+          predicates:
+            - Path=/api/books/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: book-service
+                fallbackUri: forward:/fallback
+        - id: admin-service
+          uri: lb://admin-service
+          predicates:
+            - Path=/api/admin/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: admin-service
+                fallbackUri: forward:/fallback
+        - id: review-service
+          uri: lb://review-service
+          predicates:
+            - Path=/api/reviews/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: review-service
+                fallbackUri: forward:/fallback
+        - id: message-service
+          uri: lb://message-service
+          predicates:
+            - Path=/api/messages/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: message-service
+                fallbackUri: forward:/fallback
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
