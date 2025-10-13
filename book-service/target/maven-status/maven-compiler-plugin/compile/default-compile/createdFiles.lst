@@ -1,0 +1,12 @@
+com\luv2code\bookservice\entity\History.class
+com\luv2code\bookservice\BookServiceApplication.class
+com\luv2code\bookservice\utils\ExtractJWT.class
+com\luv2code\bookservice\controller\BookController.class
+com\luv2code\bookservice\responsemodels\ShelfCurrentLoansResponse.class
+com\luv2code\bookservice\entity\Checkout.class
+com\luv2code\bookservice\service\BookService.class
+com\luv2code\bookservice\config\MyDataRestConfig.class
+com\luv2code\bookservice\entity\Book.class
+com\luv2code\bookservice\dao\HistoryRepository.class
+com\luv2code\bookservice\dao\BookRepository.class
+com\luv2code\bookservice\dao\CheckoutRepository.class
