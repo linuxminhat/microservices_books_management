@@ -161,4 +161,7 @@ public class BookService {
     public void deleteBook(Long bookId) {
         bookRepository.deleteById(bookId);
     }
+    public List<Book> getAllBooks() {
+    return bookRepository.findAll();
+}
 }
