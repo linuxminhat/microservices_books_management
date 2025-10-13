@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Config Server - Microservices</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .status {
+            background: #2ecc71;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .endpoints {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .endpoint {
+            margin: 10px 0;
+            padding: 8px;
+            background: white;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎉 Config Server</h1>
+        <div class="status">
+            ✅ Đang hoạt động trên port 8889
+        </div>
+
+        <h2>📋 Endpoints có sẵn:</h2>
+        <div class="endpoints">
+            <div class="endpoint">
+                <strong>Health Check:</strong>
+                <a href="/actuator/health" target="_blank">/actuator/health</a>
+            </div>
+            <div class="endpoint">
+                <strong>Config cho Book Service:</strong>
+                <a href="/book-service/default" target="_blank">/book-service/default</a>
+            </div>
+            <div class="endpoint">
+                <strong>Config cho API Gateway:</strong>
+                <a href="/api-gateway/default" target="_blank">/api-gateway/default</a>
+            </div>
+            <div class="endpoint">
+                <strong>Status JSON:</strong>
+                <a href="/status" target="_blank">/status</a>
+            </div>
+        </div>
+
+        <h2>🔧 Cách sử dụng:</h2>
+        <ul>
+            <li>Truy cập <code>/&lt;service-name&gt;/default</code> để lấy config</li>
+            <li>Ví dụ: <code>/book-service/default</code></li>
+            <li>Config files được lưu trong thư mục <code>config-repo</code></li>
+        </ul>
+    </div>
+</body>
+
+</html>
