@@ -7,6 +7,7 @@ import { CheckoutAndReviewBox } from "./CheckoutAndReviewBox";
 import { LatestReviews } from "./LatestReviews";
 import { useOktaAuth } from "@okta/okta-react";
 import ReviewRequestModel from "../../models/ReviewRequestModel";
+import { API_CONFIG } from '../../config/apiConfig';
 
 export const BookCheckoutPage = () => {
 
@@ -71,7 +72,7 @@ export const BookCheckoutPage = () => {
 
     useEffect(() => {
         const fetchBookReviews = async () => {
-            const reviewUrl: string = `${process.env.REACT_APP_API}/reviews/search/findByBookId?bookId=${bookId}`;
+            const reviewUrl: string = `${API_CONFIG.REVIEW_SERVICE}/reviews/search/findByBookId?bookId=${bookId}`;
 
             const responseReviews = await fetch(reviewUrl);
 
