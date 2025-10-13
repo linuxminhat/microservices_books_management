@@ -1,13 +1,9 @@
-# cfctechs_internship_project
-# Hướng Dẫn Khởi Động Hệ Thống Spring Cloud
-
+# microservices_books_management
 ## Chuẩn Bị Database
-
 Tạo các database trong **MySQL**:
 
 ```sql
 CREATE DATABASE mylibrarydb;
-CREATE DATABASE bookdb;
 ``` 
 ## Khởi Động Config Server  
 cd config-server  
