@@ -1,0 +1,7 @@
+com\luv2code\reviewservice\entity\Review.class
+com\luv2code\reviewservice\ReviewServiceApplication.class
+com\luv2code\reviewservice\dao\ReviewRepository.class
+com\luv2code\reviewservice\requestmodels\ReviewRequest.class
+com\luv2code\reviewservice\utils\ExtractJWT.class
+com\luv2code\reviewservice\service\ReviewService.class
+com\luv2code\reviewservice\controller\ReviewController.class
