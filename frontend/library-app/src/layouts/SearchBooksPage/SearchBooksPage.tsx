@@ -100,13 +100,19 @@ export const SearchBooksPage = () => {
     const categoryField = (value: string) => {
         setCurrentPage(1);
         if (
-            value.toLowerCase() === 'fe' ||
-            value.toLowerCase() === 'be' ||
-            value.toLowerCase() === 'data' ||
+            value.toLowerCase() === 'fe' || 
+            value.toLowerCase() === 'be' || 
+            value.toLowerCase() === 'data' || 
             value.toLowerCase() === 'devops'
         ) {
             setCategorySelection(value);
-            setSearchUrl(`/search/findByCategory?category=${value}&page=<pageNumber>&size=${booksPerPage}`)
+            // Map frontend value to database value
+            let categoryValue = value;
+            if (value.toLowerCase() === 'fe') categoryValue = 'Frontend';
+            if (value.toLowerCase() === 'be') categoryValue = 'Backend';
+            if (value.toLowerCase() === 'data') categoryValue = 'Database';
+            
+            setSearchUrl(`/search/findByCategory?category=${categoryValue}&page=<pageNumber>&size=${booksPerPage}`)
         } else {
             setCategorySelection('All');
             setSearchUrl(`?page=<pageNumber>&size=${booksPerPage}`)
