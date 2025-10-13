@@ -1,6 +1,6 @@
 spring:
   application:
-    name: book-service
+    name: admin-service
   config:
     import: "optional:configserver:http://localhost:8889"
   cloud:
@@ -8,7 +8,7 @@ spring:
       enabled: true
       import-check:
         enabled: false
-
+  
   datasource:
     url: jdbc:mysql://localhost:3306/mylibrarydb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
@@ -21,14 +21,14 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: org.hibernate.dialect.MySQLDialect
   
   data:
     rest:
       base-path: /api
 
 server:
-  port: 8082
+  port: 8083
 
 eureka:
   client:
