@@ -1,28 +1,43 @@
-import { Redirect } from 'react-router-dom';
-import { useOktaAuth } from '@okta/okta-react';
-import { SpinnerLoading } from '../layouts/Utils/SpinnerLoading';
-import OktaSignInWidget from './OktaSignInWidget';
+import { useEffect } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useHistory } from "react-router-dom";
+import { SpinnerLoading } from "../layouts/Utils/SpinnerLoading";
 
-const LoginWidget = ({ config }) => {
-    const { oktaAuth, authState } = useOktaAuth();
-    const onSuccess = (tokens) => {
-        oktaAuth.handleLoginRedirect(tokens);
-    };
+const LoginWidget = () => {
+    const { loginWithRedirect, isAuthenticated, isLoading, error } = useAuth0();
+    const history = useHistory();
 
-    const onError = (err) => {
-        console.log('Sign in error: ', err);
+    useEffect(() => {
+        if (!isLoading && !isAuthenticated) {
+            // Redirect user to Auth0's hosted login page
+            loginWithRedirect();
+        }
+
+        if (isAuthenticated) {
+            // If logged in, redirect to home
+            history.push("/");
+        }
+    }, [isAuthenticated, isLoading, loginWithRedirect, history]);
+
+    if (isLoading) {
+        return <SpinnerLoading />;
     }
 
-    if (!authState) {
+    if (error) {
+        console.error("Auth0 login error:", error);
         return (
-            <SpinnerLoading/>
+            <div className="container mt-5">
+                <h4>Authentication Error</h4>
+                <p>{error.message}</p>
+            </div>
         );
     }
 
-    return authState.isAuthenticated ?
-    <Redirect to={{ pathname: '/' }}/>
-    :
-    <OktaSignInWidget config={config} onSuccess={onSuccess} onError={onError}/>;
+    return (
+        <div className="container mt-5 text-center">
+            <h4>Redirecting to login...</h4>
+        </div>
+    );
 };
 
 export default LoginWidget;

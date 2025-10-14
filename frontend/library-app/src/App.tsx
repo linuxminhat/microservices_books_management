@@ -1,70 +1,84 @@
-import React from 'react';
-import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
-import './App.css';
-import { BookCheckoutPage } from './layouts/BookCheckoutPage/BookCheckoutPage';
-import { HomePage } from './layouts/HomePage/HomePage';
-import { Footer } from './layouts/NavbarAndFooter/Footer';
-import { Navbar } from './layouts/NavbarAndFooter/Navbar';
-import { SearchBooksPage } from './layouts/SearchBooksPage/SearchBooksPage';
-import { oktaConfig } from './lib/oktaConfig';
-import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
-import { Security, LoginCallback, SecureRoute } from '@okta/okta-react';
-import LoginWidget from './Auth/LoginWidget';
-import { ShelfPage } from './layouts/ShelfPage/ShelfPage';
-import { MessagesPage } from './layouts/MessagesPage/MessagesPage';
-import { ManageLibraryPage } from './layouts/ManageLibraryPage/ManageLibraryPage';
-import { ReviewListPage } from './layouts/BookCheckoutPage/ReviewListPage/ReviewListPage';
-import { PaymentPage } from './layouts/PaymentPage/PaymentPage';
-
-const oktaAuth = new OktaAuth(oktaConfig);
+import React from "react";
+import { Redirect, Route, Switch, useHistory } from "react-router-dom";
+import "./App.css";
+import { BookCheckoutPage } from "./layouts/BookCheckoutPage/BookCheckoutPage";
+import { HomePage } from "./layouts/HomePage/HomePage";
+import { Footer } from "./layouts/NavbarAndFooter/Footer";
+import { Navbar } from "./layouts/NavbarAndFooter/Navbar";
+import { SearchBooksPage } from "./layouts/SearchBooksPage/SearchBooksPage";
+import { ShelfPage } from "./layouts/ShelfPage/ShelfPage";
+import { MessagesPage } from "./layouts/MessagesPage/MessagesPage";
+import { ManageLibraryPage } from "./layouts/ManageLibraryPage/ManageLibraryPage";
+import { ReviewListPage } from "./layouts/BookCheckoutPage/ReviewListPage/ReviewListPage";
+import { PaymentPage } from "./layouts/PaymentPage/PaymentPage";
+import LoginWidget from "./Auth/LoginWidget";
+import CallbackPage from "./Auth/CallbackPage";
+import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
+import { SpinnerLoading } from "./layouts/Utils/SpinnerLoading";
 
 export const App = () => {
+  const history = useHistory();
+  const { isAuthenticated, isLoading } = useAuth0();
 
-  const customAuthHandler = () => {
-    history.push('/login');
+  if (isLoading) {
+    return <SpinnerLoading />;
   }
 
-  const history = useHistory();
-
-  const restoreOriginalUri = async (_oktaAuth: any, originalUri: any) => {
-    history.replace(toRelativeUrl(originalUri || '/', window.location.origin));
+  // 👇 Same concept as Okta's customAuthHandler — if unauthenticated, redirect to /login
+  const customAuthHandler = () => {
+    history.push("/login");
   };
 
+  // 👇 Equivalent of SecureRoute in Auth0
+  const ProtectedRoute = ({ component, ...args }: any) => {
+    const Component = withAuthenticationRequired(component, {
+      onRedirecting: () => <SpinnerLoading />,
+      loginOptions: { appState: { returnTo: window.location.pathname } },
+    });
+    return <Route component={Component} {...args} />;
+  };
 
   return (
-    <div className='d-flex flex-column min-vh-100'>
-      <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri} onAuthRequired={customAuthHandler}>
+    <div className="d-flex flex-column min-vh-100">
       <Navbar />
-      <div className='flex-grow-1'>
+      <div className="flex-grow-1">
         <Switch>
-          <Route path='/' exact>
-            <Redirect to='/home' />
+          <Route path="/" exact>
+            <Redirect to="/home" />
           </Route>
-          <Route path='/home'>
+
+          <Route path="/home">
             <HomePage />
           </Route>
-          <Route path='/search'>
+
+          <Route path="/search">
             <SearchBooksPage />
           </Route>
-          <Route path='/reviewlist/:bookId'>
-            <ReviewListPage/>
+
+          <Route path="/reviewlist/:bookId">
+            <ReviewListPage />
           </Route>
-          <Route path='/checkout/:bookId'>
-            <BookCheckoutPage/>
+
+          <Route path="/checkout/:bookId">
+            <BookCheckoutPage />
           </Route>
-          <Route path='/login' render={
-            () => <LoginWidget config={oktaConfig} /> 
-            } 
-          />
-          <Route path='/login/callback' component={LoginCallback} />
-          <SecureRoute path='/shelf'> <ShelfPage/> </SecureRoute>
-          <SecureRoute path='/messages'> <MessagesPage/> </SecureRoute>
-          <SecureRoute path='/admin'> <ManageLibraryPage/> </SecureRoute>
-          <SecureRoute path='/fees'> <PaymentPage/> </SecureRoute>
+
+          {/* Equivalent of Okta’s /login and LoginWidget */}
+          <Route path="/login" render={() => <LoginWidget />} />
+
+          {/* Equivalent of Okta's /login/callback */}
+          <Route path="/callback">
+            <CallbackPage />
+          </Route>
+
+          {/* Protected routes (Auth0’s version of SecureRoute) */}
+          <ProtectedRoute path="/shelf" component={ShelfPage} />
+          <ProtectedRoute path="/messages" component={MessagesPage} />
+          <ProtectedRoute path="/admin" component={ManageLibraryPage} />
+          <ProtectedRoute path="/fees" component={PaymentPage} />
         </Switch>
       </div>
       <Footer />
-      </Security>
     </div>
   );
-}
+};

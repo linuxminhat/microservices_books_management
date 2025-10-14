@@ -1,21 +1,40 @@
 import { Link, NavLink } from "react-router-dom";
-import { useOktaAuth } from '@okta/okta-react';
+import { useAuth0 } from "@auth0/auth0-react";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
+import { useEffect } from "react";
 
 export const Navbar = () => {
 
-  const { oktaAuth, authState } = useOktaAuth();
+  const { isLoading, isAuthenticated, user, loginWithRedirect, logout } = useAuth0();
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      console.log("=== AUTH0 DEBUG ===");
+      console.log("Full user object:", user);
+      console.log("User email:", user.email);
+      console.log("Roles from custom claim:", user?.["https://example.com/roles"]);
+      console.log("All user keys:", Object.keys(user));
+      console.log("==================");
+    }
+  }, [isAuthenticated, user]);
 
-  if (!authState) {
-    return <SpinnerLoading />
+  if (isLoading) {
+    return <SpinnerLoading />;
   }
 
-  const handleLogout = async () => oktaAuth.signOut();
+
+  const handleLogout = () => {
+    logout({
+      logoutParams: {
+        returnTo: window.location.origin,
+      },
+    });
+  };
+
 
   return (
     <nav className='navbar navbar-expand-lg navbar-dark main-color py-3'>
       <div className='container-fluid'>
-      <Link className='navbar-brand' to='/home'>CFC Books Management Project</Link>
+        <Link className='navbar-brand' to='/home'>CFC Books Management Project</Link>
         <button className='navbar-toggler' type='button'
           data-bs-toggle='collapse' data-bs-target='#navbarNavDropdown'
           aria-controls='navbarNavDropdown' aria-expanded='false'
@@ -31,30 +50,38 @@ export const Navbar = () => {
             <li className='nav-item'>
               <NavLink className='nav-link' to='/search'>Search Books</NavLink>
             </li>
-            {authState.isAuthenticated &&
+            {isAuthenticated &&
               <li className='nav-item'>
                 <NavLink className='nav-link' to='/shelf'>Shelf</NavLink>
               </li>
             }
-            {authState.isAuthenticated &&
+            {isAuthenticated &&
               <li className='nav-item'>
                 <NavLink className='nav-link' to='/fees'>Pay fees</NavLink>
               </li>
             }
-            {authState.isAuthenticated && authState.accessToken?.claims?.userType === 'admin' &&
+            {isAuthenticated && user?.["https://example.com/roles"]?.includes("admin") &&
               <li className='nav-item'>
                 <NavLink className='nav-link' to='/admin'>Admin</NavLink>
               </li>
             }
           </ul>
           <ul className='navbar-nav ms-auto'>
-            {!authState.isAuthenticated ?
+            {!isAuthenticated ?
               <li className='nav-item m-1'>
-                <Link type='button' className='btn btn-outline-light' to='/login'>Sign in</Link>
+                <button
+                  type='button'
+                  className='btn btn-outline-light'
+                  onClick={() => loginWithRedirect()}
+                >
+                  Sign in
+                </button>
               </li>
               :
               <li>
-                <button className='btn btn-outline-light' onClick={handleLogout}>Logout</button>
+                <button className='btn btn-outline-light' onClick={handleLogout}>
+                  Logout
+                </button>
               </li>
             }
           </ul>
@@ -62,4 +89,4 @@ export const Navbar = () => {
       </div>
     </nav>
   );
-}
+};

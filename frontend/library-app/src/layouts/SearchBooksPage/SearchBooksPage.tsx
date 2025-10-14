@@ -21,6 +21,7 @@ export const SearchBooksPage = () => {
         const fetchBooks = async () => {
             const baseUrl: string = `${API_CONFIG.BOOK_SERVICE}/books`;
 
+
             let url: string = '';
 
             if (searchUrl === '') {
@@ -100,9 +101,9 @@ export const SearchBooksPage = () => {
     const categoryField = (value: string) => {
         setCurrentPage(1);
         if (
-            value.toLowerCase() === 'fe' || 
-            value.toLowerCase() === 'be' || 
-            value.toLowerCase() === 'data' || 
+            value.toLowerCase() === 'fe' ||
+            value.toLowerCase() === 'be' ||
+            value.toLowerCase() === 'data' ||
             value.toLowerCase() === 'devops'
         ) {
             setCategorySelection(value);
@@ -111,7 +112,7 @@ export const SearchBooksPage = () => {
             if (value.toLowerCase() === 'fe') categoryValue = 'Frontend';
             if (value.toLowerCase() === 'be') categoryValue = 'Backend';
             if (value.toLowerCase() === 'data') categoryValue = 'Database';
-            
+
             setSearchUrl(`/search/findByCategory?category=${categoryValue}&page=<pageNumber>&size=${booksPerPage}`)
         } else {
             setCategorySelection('All');
