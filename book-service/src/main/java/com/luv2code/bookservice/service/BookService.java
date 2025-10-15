@@ -149,7 +149,6 @@ public class BookService {
         }
     }
 
-    // Internal methods for other services to call via Feign
     public Optional<Book> findBookById(Long bookId) {
         return bookRepository.findById(bookId);
     }
@@ -161,7 +160,8 @@ public class BookService {
     public void deleteBook(Long bookId) {
         bookRepository.deleteById(bookId);
     }
+
     public List<Book> getAllBooks() {
-    return bookRepository.findAll();
-}
+        return bookRepository.findAll();
+    }
 }
