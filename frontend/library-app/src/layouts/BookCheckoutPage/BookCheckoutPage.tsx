@@ -23,28 +23,20 @@ export const BookCheckoutPage = () => {
     const [book, setBook] = useState<BookModel>();
     const [isLoading, setIsLoading] = useState(true);
     const [httpError, setHttpError] = useState(null);
-
-    // Review State
     const [reviews, setReviews] = useState<ReviewModel[]>([])
     const [totalStars, setTotalStars] = useState(0);
     const [isLoadingReview, setIsLoadingReview] = useState(true);
 
     const [isReviewLeft, setIsReviewLeft] = useState(false);
     const [isLoadingUserReview, setIsLoadingUserReview] = useState(true);
-
-    // Loans Count State
     const [currentLoansCount, setCurrentLoansCount] = useState(0);
     const [isLoadingCurrentLoansCount, setIsLoadingCurrentLoansCount] = useState(true);
-
-    // Is Book Check Out?
     const [isCheckedOut, setIsCheckedOut] = useState(false);
     const [isLoadingBookCheckedOut, setIsLoadingBookCheckedOut] = useState(true);
-
-    // Payment
     const [displayError, setDisplayError] = useState(false);
 
     const bookId = (window.location.pathname).split('/')[2];
-
+    //fetch book 
     useEffect(() => {
         const fetchBook = async () => {
             try {
@@ -75,14 +67,13 @@ export const BookCheckoutPage = () => {
         fetchBook();
     }, [isCheckedOut, bookId]);
 
-    //fetch reviews
+    //fet revuews 
     useEffect(() => {
         const fetchBookReviews = async () => {
             try {
                 const reviewUrl = `${API_CONFIG.REVIEW_SERVICE}/reviews/search/findByBookId?bookId=${bookId}`;
                 const response = await fetch(reviewUrl);
                 if (!response.ok) throw new Error("Something went wrong!");
-
                 const data = await response.json();
                 const reviewsData = data._embedded.reviews;
                 const loadedReviews: ReviewModel[] = [];
@@ -116,6 +107,7 @@ export const BookCheckoutPage = () => {
         fetchBookReviews();
     }, [bookId, isReviewLeft]);
 
+    //fetch UserReview 
     useEffect(() => {
         const fetchUserReviewBook = async () => {
             try {

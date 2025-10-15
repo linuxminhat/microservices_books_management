@@ -6,7 +6,6 @@ const Auth0SignInWidget = () => {
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) {
-            // Redirect user to Auth0 Universal Login
             loginWithRedirect();
         }
     }, [isLoading, isAuthenticated, loginWithRedirect]);

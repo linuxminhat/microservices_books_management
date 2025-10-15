@@ -10,13 +10,11 @@ export const ReviewListPage = () => {
     const [reviews, setReviews] = useState<ReviewModel[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [httpError, setHttpError] = useState(null);
-
     const [currentPage, setCurrentPage] = useState(1);
     const [reviewsPerPage] = useState(5);
     const [totalAmountOfReviews, setTotalAmountOfReviews] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
 
-    // Book to lookup reviews
     const bookId = (window.location.pathname).split('/')[2];
 
     useEffect(() => {

@@ -9,12 +9,10 @@ const LoginWidget = () => {
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) {
-            // Redirect user to Auth0's hosted login page
             loginWithRedirect();
         }
 
         if (isAuthenticated) {
-            // If logged in, redirect to home
             history.push("/");
         }
     }, [isAuthenticated, isLoading, loginWithRedirect, history]);
