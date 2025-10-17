@@ -9,6 +9,12 @@ spring:
       import-check:
         enabled: false
   
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-nkq0liomsorgp780.us.auth0.com/
+  
   datasource:
     url: jdbc:mysql://localhost:3306/mylibrarydb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
@@ -45,3 +51,8 @@ management:
   endpoint:
     health:
       show-details: always
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: TRACE
+    org.springframework.web: DEBUG

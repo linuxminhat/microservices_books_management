@@ -17,6 +17,7 @@ export const BookCheckoutPage = () => {
         loginWithRedirect,
         isAuthenticated,
         getAccessTokenSilently,
+        getIdTokenClaims,  // ← THÊM: để lấy ID Token
         isLoading: authLoading,
     } = useAuth0();
 
@@ -36,6 +37,13 @@ export const BookCheckoutPage = () => {
     const [displayError, setDisplayError] = useState(false);
 
     const bookId = (window.location.pathname).split('/')[2];
+
+    // ← THÊM: Helper function để lấy ID Token (JWS)
+    const getIdToken = async () => {
+        const claims = await getIdTokenClaims();
+        return claims?.__raw || '';
+    };
+
     //fetch book 
     useEffect(() => {
         const fetchBook = async () => {
@@ -112,8 +120,8 @@ export const BookCheckoutPage = () => {
         const fetchUserReviewBook = async () => {
             try {
                 if (isAuthenticated) {
-                    const token = await getAccessTokenSilently();
-                    const url = `${process.env.REACT_APP_API}/reviews/secure/user/book/?bookId=${bookId}`;
+                    const token = await getIdToken();  // ← ĐỔI: dùng ID Token thay vì Access Token
+                    const url = `${API_CONFIG.REVIEW_SERVICE}/reviews/secure/user/book?bookId=${bookId}`;
                     const response = await fetch(url, {
                         method: "GET",
                         headers: {
@@ -134,13 +142,13 @@ export const BookCheckoutPage = () => {
         };
 
         fetchUserReviewBook();
-    }, [isAuthenticated, getAccessTokenSilently, bookId]);
+    }, [isAuthenticated, bookId]);  // ← ĐỔI: bỏ getAccessTokenSilently khỏi dependencies
 
     useEffect(() => {
         const fetchUserCurrentLoansCount = async () => {
             try {
                 if (isAuthenticated) {
-                    const token = await getAccessTokenSilently();
+                    const token = await getIdToken();  // ← ĐỔI: dùng ID Token
                     const url = `${process.env.REACT_APP_API}/books/secure/currentloans/count`;
                     const response = await fetch(url, {
                         method: "GET",
@@ -162,14 +170,15 @@ export const BookCheckoutPage = () => {
         };
 
         fetchUserCurrentLoansCount();
-    }, [isAuthenticated, getAccessTokenSilently, isCheckedOut]);
+    }, [isAuthenticated, isCheckedOut]);  // ← ĐỔI: bỏ getAccessTokenSilently
 
     useEffect(() => {
         const fetchUserCheckedOutBook = async () => {
             try {
                 if (isAuthenticated) {
-                    const token = await getAccessTokenSilently();
-                    const url = `${process.env.REACT_APP_API}/books/secure/ischeckedout/byuser/?bookId=${bookId}`;
+                    const token = await getIdToken();  // ← ĐỔI: dùng ID Token
+                    const url = `${process.env.REACT_APP_API}/books/secure/ischeckedout/byuser?bookId=${bookId}`;
+
                     const response = await fetch(url, {
                         method: "GET",
                         headers: {
@@ -190,7 +199,7 @@ export const BookCheckoutPage = () => {
         };
 
         fetchUserCheckedOutBook();
-    }, [isAuthenticated, getAccessTokenSilently, bookId]);
+    }, [isAuthenticated, bookId]);  // ← ĐỔI: bỏ getAccessTokenSilently
 
 
     if (
@@ -214,8 +223,8 @@ export const BookCheckoutPage = () => {
 
     async function checkoutBook() {
         try {
-            const token = await getAccessTokenSilently();
-            const url = `${process.env.REACT_APP_API}/books/secure/checkout/?bookId=${book?.id}`;
+            const token = await getIdToken();  // ← ĐỔI: dùng ID Token
+            const url = `${process.env.REACT_APP_API}/books/secure/checkout?bookId=${book?.id}`;
             const response = await fetch(url, {
                 method: "PUT",
                 headers: {
@@ -237,10 +246,10 @@ export const BookCheckoutPage = () => {
     async function submitReview(starInput: number, reviewDescription: string) {
         try {
             if (!book?.id) return;
-            const token = await getAccessTokenSilently();
+            const token = await getIdToken();  // ← ĐỔI: dùng ID Token
 
             const reviewRequestModel = new ReviewRequestModel(starInput, book.id, reviewDescription);
-            const url = `${process.env.REACT_APP_API}/reviews/secure`;
+            const url = `${API_CONFIG.REVIEW_SERVICE}/reviews/secure`;
             const response = await fetch(url, {
                 method: "POST",
                 headers: {

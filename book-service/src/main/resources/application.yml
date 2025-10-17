@@ -27,6 +27,13 @@ spring:
     rest:
       base-path: /api
 
+  # THÊM MỚI: Cấu hình Auth0 JWT validation
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-nkq0liomsorgp780.us.auth0.com/
+
 server:
   port: 8082
 

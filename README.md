@@ -15,6 +15,11 @@ cd eureka-server
 mvn spring-boot:run  
 Kiểm tra hoạt động tại: [http://localhost:8761](http://localhost:8761)
 
+## Khởi Động API GATEWAY
+cd api-gateway  
+mvn spring-boot:run  
+Kiểm tra hoạt động tại: [http://localhost:8090](http://localhost:8090)
+
 ## Khởi Động Book Service  
 cd book-service  
 mvn spring-boot:run  

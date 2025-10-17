@@ -21,8 +21,9 @@ public class SecurityConfiguration {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
-                .anyRequest().permitAll()
+                .anyRequest().permitAll()  // ← ĐỔI: BỎ .authenticated()
             );
+            // ← XÓA: .oauth2ResourceServer(oauth2 -> oauth2.jwt());
         return http.build();
     }
 

@@ -28,7 +28,8 @@ export const HistoryPage = () => {
                 const token = await getAccessTokenSilently();
                 const email = user?.email;
 
-                const url = `${process.env.REACT_APP_API}/histories/search/findBooksByUserEmail/?userEmail=${email}&page=${currentPage - 1}&size=5`;
+                // Dòng 31 - BỎ dấu / trước ?
+const url = `${process.env.REACT_APP_API}/histories/search/findBooksByUserEmail?userEmail=${email}&page=${currentPage - 1}&size=5`;
                 const requestOptions = {
                     method: "GET",
                     headers: {

@@ -19,7 +19,7 @@ export const Messages = () => {
     // Messages
     const [messages, setMessages] = useState<MessageModel[]>([]);
 
-    // Pagination
+    //Pagination 
     const [messagesPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
