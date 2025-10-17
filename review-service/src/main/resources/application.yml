@@ -16,7 +16,7 @@ spring:
           issuer-uri: https://dev-nkq0liomsorgp780.us.auth0.com/
   
   datasource:
-    url: jdbc:mysql://localhost:3306/mylibrarydb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/reviewdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: 
     driver-class-name: com.mysql.cj.jdbc.Driver
