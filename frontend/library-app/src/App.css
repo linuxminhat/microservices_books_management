@@ -1,5 +1,10 @@
 :root{
     --mainOpacity: rgba(0, 0, 0, 0.55);
+    /* Màu gradient cho navbar - Tươi sáng và hiện đại */
+    --primary-color: #2563eb;
+    --secondary-color: #1e40af;
+    --accent-color: #3b82f6;
+    --hover-color: #60a5fa;
 }
 
 .header {
@@ -15,11 +20,118 @@
     left: 0;
     width: 100%;
     height: 100%;
-  }
-
-.main-color {
-background-color: #0e76a8 ;
 }
+
+/* ===== NAVBAR STYLES - IMPROVED ===== */
+.main-color {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo/Brand */
+.navbar-brand {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px;
+    padding: 0.5rem 1rem !important;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-brand:hover {
+    transform: translateY(-2px);
+    color: #fff !important;
+}
+
+/* Logo icon */
+.navbar-brand::before {
+    content: "📚";
+    font-size: 1.8rem;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Nav Items */
+.navbar-nav .nav-item {
+    margin: 0 0.3rem;
+}
+
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 1.05rem !important;
+    font-weight: 500 !important;
+    padding: 0.6rem 1.2rem !important;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover Effect */
+.navbar-nav .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #fff !important;
+    transform: translateY(-2px);
+}
+
+/* Active State - Rõ ràng */
+.navbar-nav .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.25);
+    color: #fff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Active indicator underline */
+.navbar-nav .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 3px;
+    background-color: #fbbf24;
+    border-radius: 2px;
+}
+
+/* Buttons */
+.btn-outline-light {
+    font-weight: 600 !important;
+    padding: 0.6rem 1.5rem !important;
+    border: 2px solid rgba(255, 255, 255, 0.8) !important;
+    border-radius: 25px !important;
+    transition: all 0.3s ease !important;
+    font-size: 1rem !important;
+}
+
+.btn-outline-light:hover {
+    background-color: #fff !important;
+    color: var(--primary-color) !important;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile Responsive */
+@media (max-width: 991px) {
+    .navbar-nav .nav-link {
+        text-align: left;
+        margin: 0.2rem 0;
+    }
+    
+    .navbar-nav .nav-link.active::after {
+        display: none;
+    }
+}
+
+/* ===== END NAVBAR STYLES ===== */
 
 .col-image-left {
     background-image: url("./Images/PublicImages/image-4.jpg");
@@ -41,7 +153,7 @@ background-color: #0e76a8 ;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
-  }
+}
 
 .book-div {
     width: 480px;
@@ -51,4 +163,4 @@ background-color: #0e76a8 ;
 .inactiveLink {
     pointer-events: none;
     cursor: default;
- }
+}

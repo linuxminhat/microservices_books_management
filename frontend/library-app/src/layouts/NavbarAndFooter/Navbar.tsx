@@ -34,7 +34,9 @@ export const Navbar = () => {
   return (
     <nav className='navbar navbar-expand-lg navbar-dark main-color py-3'>
       <div className='container-fluid'>
-        <Link className='navbar-brand' to='/home'>CFC Books Management Project</Link>
+        <Link className='navbar-brand' to='/home'>
+          CFC Books
+        </Link>
         <button className='navbar-toggler' type='button'
           data-bs-toggle='collapse' data-bs-target='#navbarNavDropdown'
           aria-controls='navbarNavDropdown' aria-expanded='false'
@@ -57,7 +59,7 @@ export const Navbar = () => {
             }
             {isAuthenticated &&
               <li className='nav-item'>
-                <NavLink className='nav-link' to='/fees'>Pay fees</NavLink>
+                <NavLink className='nav-link' to='/fees'>Pay Fees</NavLink>
               </li>
             }
             {isAuthenticated && user?.["https://example.com/roles"]?.includes("admin") &&
