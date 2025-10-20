@@ -1,4 +1,5 @@
 D:\fullstackproject\admin-service\src\main\java\com\luv2code\adminservice\AdminServiceApplication.java
+D:\fullstackproject\admin-service\src\main\java\com\luv2code\adminservice\client\BookClient.java
 D:\fullstackproject\admin-service\src\main\java\com\luv2code\adminservice\controller\AdminController.java
 D:\fullstackproject\admin-service\src\main\java\com\luv2code\adminservice\dao\BookRepository.java
 D:\fullstackproject\admin-service\src\main\java\com\luv2code\adminservice\dao\CheckoutRepository.java

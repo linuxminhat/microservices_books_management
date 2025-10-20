@@ -84,13 +84,14 @@ public class BookController {
     public void deleteBook(@PathVariable Long bookId) {
         bookService.deleteBook(bookId);
     }
-    @GetMapping
-public List<Book> getAllBooks() {
-    return bookService.getAllBooks();
-}
 
-@GetMapping("/{bookId}")
-public Optional<Book> getBookById(@PathVariable Long bookId) {
-    return bookService.findBookById(bookId);
-}
+    @GetMapping
+    public List<Book> getAllBooks() {
+        return bookService.getAllBooks();
+    }
+
+    @GetMapping("/{bookId}")
+    public Optional<Book> getBookById(@PathVariable Long bookId) {
+        return bookService.findBookById(bookId);
+    }
 }

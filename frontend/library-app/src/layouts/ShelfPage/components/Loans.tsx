@@ -6,13 +6,15 @@ import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 import { LoansModal } from "./LoansModal";
 
 export const Loans = () => {
-    const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
+    const { isAuthenticated, isLoading, getIdTokenClaims } = useAuth0();
     const [httpError, setHttpError] = useState<string | null>(null);
 
     // Current Loans
     const [shelfCurrentLoans, setShelfCurrentLoans] = useState<ShelfCurrentLoans[]>([]);
     const [isLoadingUserLoans, setIsLoadingUserLoans] = useState(true);
     const [checkout, setCheckout] = useState(false);
+
+    const getIdToken = async () => (await getIdTokenClaims())?.__raw || "";
 
     useEffect(() => {
         const fetchUserCurrentLoans = async () => {
@@ -22,7 +24,7 @@ export const Loans = () => {
             }
 
             try {
-                const token = await getAccessTokenSilently();
+                const token = await getIdToken();
 
                 const url = `${process.env.REACT_APP_API}/books/secure/currentloans`;
                 const requestOptions = {
@@ -47,7 +49,7 @@ export const Loans = () => {
 
         fetchUserCurrentLoans();
         window.scrollTo(0, 0);
-    }, [isAuthenticated, checkout, getAccessTokenSilently]);
+    }, [isAuthenticated, checkout, getIdTokenClaims]);
 
     if (isLoading || isLoadingUserLoans) {
         return <SpinnerLoading />;
@@ -63,8 +65,8 @@ export const Loans = () => {
 
     async function returnBook(bookId: number) {
         try {
-            const token = await getAccessTokenSilently();
-            const url = `${process.env.REACT_APP_API}/books/secure/return/?bookId=${bookId}`;
+            const token = await getIdToken();
+            const url = `${process.env.REACT_APP_API}/books/secure/return?bookId=${bookId}`;
             const requestOptions = {
                 method: "PUT",
                 headers: {
@@ -82,8 +84,8 @@ export const Loans = () => {
 
     async function renewLoan(bookId: number) {
         try {
-            const token = await getAccessTokenSilently();
-            const url = `${process.env.REACT_APP_API}/books/secure/renew/loan/?bookId=${bookId}`;
+            const token = await getIdToken();
+            const url = `${process.env.REACT_APP_API}/books/secure/renew/loan?bookId=${bookId}`;
             const requestOptions = {
                 method: "PUT",
                 headers: {

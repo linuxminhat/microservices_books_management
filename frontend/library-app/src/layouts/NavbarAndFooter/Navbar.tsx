@@ -4,8 +4,8 @@ import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import { useEffect } from "react";
 
 export const Navbar = () => {
-
   const { isLoading, isAuthenticated, user, loginWithRedirect, logout } = useAuth0();
+
   useEffect(() => {
     if (isAuthenticated && user) {
       console.log("=== AUTH0 DEBUG ===");
@@ -21,7 +21,6 @@ export const Navbar = () => {
     return <SpinnerLoading />;
   }
 
-
   const handleLogout = () => {
     logout({
       logoutParams: {
@@ -30,6 +29,14 @@ export const Navbar = () => {
     });
   };
 
+  // Điều kiện admin đồng bộ với trang Admin:
+  // - userType trong ID Token (không namespace)
+  // - userType dạng namespaced (thay namespace theo cấu hình của bạn nếu cần)
+  // - roles namespaced chứa 'admin' (nếu bạn dùng roles)
+  const isAdmin =
+    (user?.["userType"] === "admin") ||
+    (user?.["https://your-namespace.com/userType"] === "admin") ||
+    ((user?.["https://example.com/roles"] as string[])?.includes?.("admin") ?? false);
 
   return (
     <nav className='navbar navbar-expand-lg navbar-dark main-color py-3'>
@@ -62,7 +69,7 @@ export const Navbar = () => {
                 <NavLink className='nav-link' to='/fees'>Pay Fees</NavLink>
               </li>
             }
-            {isAuthenticated && user?.["https://example.com/roles"]?.includes("admin") &&
+            {isAuthenticated && isAdmin &&
               <li className='nav-item'>
                 <NavLink className='nav-link' to='/admin'>Admin</NavLink>
               </li>

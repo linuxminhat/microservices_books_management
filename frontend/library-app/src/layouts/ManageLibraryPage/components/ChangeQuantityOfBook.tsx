@@ -3,7 +3,11 @@ import { useAuth0 } from "@auth0/auth0-react";
 import BookModel from "../../../models/BookModel";
 
 export const ChangeQuantityOfBook: React.FC<{ book: BookModel; deleteBook: any }> = (props) => {
-    const { isAuthenticated, getAccessTokenSilently, loginWithRedirect } = useAuth0();
+    const { isAuthenticated, getIdTokenClaims, loginWithRedirect } = useAuth0();
+
+    // Helper: lấy ID Token (JWT chứa userType)
+    const getIdToken = async () => (await getIdTokenClaims())?.__raw || "";
+
     const [quantity, setQuantity] = useState<number>(0);
     const [remaining, setRemaining] = useState<number>(0);
 
@@ -22,7 +26,7 @@ export const ChangeQuantityOfBook: React.FC<{ book: BookModel; deleteBook: any }
         }
 
         try {
-            const token = await getAccessTokenSilently();
+            const token = await getIdToken();
             const url = `${process.env.REACT_APP_API}/admin/secure/increase/book/quantity/?bookId=${props.book?.id}`;
             const response = await fetch(url, {
                 method: "PUT",
@@ -47,7 +51,7 @@ export const ChangeQuantityOfBook: React.FC<{ book: BookModel; deleteBook: any }
         }
 
         try {
-            const token = await getAccessTokenSilently();
+            const token = await getIdToken();
             const url = `${process.env.REACT_APP_API}/admin/secure/decrease/book/quantity/?bookId=${props.book?.id}`;
             const response = await fetch(url, {
                 method: "PUT",
@@ -72,7 +76,7 @@ export const ChangeQuantityOfBook: React.FC<{ book: BookModel; deleteBook: any }
         }
 
         try {
-            const token = await getAccessTokenSilently();
+            const token = await getIdToken();
             const url = `${process.env.REACT_APP_API}/admin/secure/delete/book/?bookId=${props.book?.id}`;
             const response = await fetch(url, {
                 method: "DELETE",

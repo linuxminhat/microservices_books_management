@@ -6,7 +6,7 @@ import { Pagination } from "../../Utils/Pagination";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 
 export const HistoryPage = () => {
-    const { isAuthenticated, isLoading, user, getAccessTokenSilently } = useAuth0();
+    const { isAuthenticated, isLoading, user, getIdTokenClaims } = useAuth0();
     const [isLoadingHistory, setIsLoadingHistory] = useState(true);
     const [httpError, setHttpError] = useState<string | null>(null);
 
@@ -17,6 +17,8 @@ export const HistoryPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
 
+    const getIdToken = async () => (await getIdTokenClaims())?.__raw || "";
+
     useEffect(() => {
         const fetchUserHistory = async () => {
             if (!isAuthenticated) {
@@ -25,11 +27,13 @@ export const HistoryPage = () => {
             }
 
             try {
-                const token = await getAccessTokenSilently();
-                const email = user?.email;
+                const token = await getIdToken();
+                const id = user?.sub ?? "";
 
-                // Dòng 31 - BỎ dấu / trước ?
-const url = `${process.env.REACT_APP_API}/histories/search/findBooksByUserEmail?userEmail=${email}&page=${currentPage - 1}&size=5`;
+                const url =
+                    `${process.env.REACT_APP_API}/histories/search/findBooksByUserEmail` +
+                    `?email=${encodeURIComponent(id)}&page=${currentPage - 1}&size=5`;
+
                 const requestOptions = {
                     method: "GET",
                     headers: {
@@ -44,8 +48,8 @@ const url = `${process.env.REACT_APP_API}/histories/search/findBooksByUserEmail?
                 }
 
                 const historyResponseJson = await historyResponse.json();
-                setHistories(historyResponseJson._embedded.histories);
-                setTotalPages(historyResponseJson.page.totalPages);
+                setHistories(historyResponseJson._embedded?.histories ?? []);
+                setTotalPages(historyResponseJson.page?.totalPages ?? 0);
             } catch (error: any) {
                 setHttpError(error.message);
             } finally {
@@ -54,7 +58,7 @@ const url = `${process.env.REACT_APP_API}/histories/search/findBooksByUserEmail?
         };
 
         fetchUserHistory();
-    }, [isAuthenticated, currentPage, getAccessTokenSilently, user]);
+    }, [isAuthenticated, currentPage, getIdTokenClaims, user]);
 
     if (isLoading || isLoadingHistory) {
         return <SpinnerLoading />;

@@ -3,7 +3,10 @@ import { useAuth0 } from "@auth0/auth0-react";
 import AddBookRequest from "../../../models/AddBookRequest";
 
 export const AddNewBook = () => {
-    const { isAuthenticated, getAccessTokenSilently, loginWithRedirect } = useAuth0();
+    const { isAuthenticated, getIdTokenClaims, loginWithRedirect } = useAuth0();
+
+    // Helper: lấy ID Token (JWT chứa userType)
+    const getIdToken = async () => (await getIdTokenClaims())?.__raw || "";
 
     // New Book fields
     const [title, setTitle] = useState("");
@@ -59,7 +62,7 @@ export const AddNewBook = () => {
         }
 
         try {
-            const token = await getAccessTokenSilently();
+            const token = await getIdToken();
             const url = `${process.env.REACT_APP_API}/admin/secure/add/book`;
 
             const book: AddBookRequest = new AddBookRequest(

@@ -12,7 +12,29 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
+
+      # CORS toàn cục tại Gateway (frontend chạy ở 3000)
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - http://localhost:3000
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
+      # Khử trùng lặp CORS headers giữa Gateway và downstream services
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
+
       routes:
+        # Book service (REST + secure endpoints)
         - id: book-service
           uri: lb://book-service
           predicates:
@@ -22,6 +44,19 @@ spring:
               args:
                 name: book-service
                 fallbackUri: forward:/fallback
+
+        # Spring Data REST histories (nằm trong book-service)
+        - id: book-service-histories
+          uri: lb://book-service
+          predicates:
+            - Path=/api/histories/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: book-service
+                fallbackUri: forward:/fallback
+
+        # Admin service
         - id: admin-service
           uri: lb://admin-service
           predicates:
@@ -31,6 +66,8 @@ spring:
               args:
                 name: admin-service
                 fallbackUri: forward:/fallback
+
+        # Review service
         - id: review-service
           uri: lb://review-service
           predicates:
@@ -40,6 +77,8 @@ spring:
               args:
                 name: review-service
                 fallbackUri: forward:/fallback
+
+        # Message service
         - id: message-service
           uri: lb://message-service
           predicates:
@@ -60,4 +99,3 @@ management:
     web:
       exposure:
         include: health,info,gateway
-        
