@@ -106,28 +106,55 @@ public class BookService {
     }
 
     public void returnBook(String userEmail, Long bookId) throws Exception {
+        // Debug
+        System.out.println("=== RETURN BOOK DEBUG ===");
+        System.out.println("User Email: " + userEmail);
+        System.out.println("Book ID: " + bookId);
 
         Optional<Book> book = bookRepository.findById(bookId);
 
+        if (!book.isPresent()) {
+            System.err.println("=== BOOK NOT FOUND: " + bookId + " ===");
+            throw new Exception("Book does not exist. Book ID: " + bookId);
+        }
+
+        System.out.println("=== BOOK FOUND: " + book.get().getTitle() + " ===");
+        System.out.println("=== BOOK IMAGE LENGTH: "
+                + (book.get().getImg() != null ? book.get().getImg().length() : "NULL") + " ===");
+
         Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
 
-        if (!book.isPresent() || validateCheckout == null) {
-            throw new Exception("Book does not exist or not checked out by user");
+        if (validateCheckout == null) {
+            System.err.println("=== CHECKOUT NOT FOUND FOR USER: " + userEmail + ", BOOK: " + bookId + " ===");
+            throw new Exception("Book is not checked out by user");
         }
-        book.get().setCopiesAvailable(book.get().getCopiesAvailable() + 1);
-        bookRepository.save(book.get());
-        checkoutRepository.deleteById(validateCheckout.getId());
 
-        History history = new History(
-                userEmail,
-                validateCheckout.getCheckoutDate(),
-                LocalDate.now().toString(),
-                book.get().getTitle(),
-                book.get().getAuthor(),
-                book.get().getDescription(),
-                book.get().getImg());
+        System.out.println("=== CHECKOUT FOUND: " + validateCheckout.getId() + " ===");
 
-        historyRepository.save(history);
+        try {
+            book.get().setCopiesAvailable(book.get().getCopiesAvailable() + 1); // SỬA DÒNG NÀY
+            bookRepository.save(book.get());
+            checkoutRepository.deleteById(validateCheckout.getId());
+
+            History history = new History(
+                    userEmail,
+                    validateCheckout.getCheckoutDate(),
+                    LocalDate.now().toString(),
+                    book.get().getTitle(),
+                    book.get().getAuthor(),
+                    book.get().getDescription(),
+                    book.get().getImg());
+
+            System.out.println("=== SAVING HISTORY WITH IMAGE LENGTH: "
+                    + (history.getImg() != null ? history.getImg().length() : "NULL") + " ===");
+            historyRepository.save(history);
+            System.out.println("=== HISTORY SAVED SUCCESSFULLY ===");
+
+        } catch (Exception e) {
+            System.err.println("=== ERROR SAVING HISTORY: " + e.getMessage() + " ===");
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public void renewLoan(String userEmail, Long bookId) throws Exception {

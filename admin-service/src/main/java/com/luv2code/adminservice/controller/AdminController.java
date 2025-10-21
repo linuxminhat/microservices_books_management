@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.Map;
 
 @CrossOrigin("http://localhost:3000")
@@ -27,7 +26,6 @@ public class AdminController {
         Map<String, Object> payload = JwtUtils.parsePayload(authHeader);
         if (JwtUtils.hasAdmin(payload))
             return true;
-
         Object email = payload.get("email");
         if (email != null) {
             String e = String.valueOf(email).toLowerCase();

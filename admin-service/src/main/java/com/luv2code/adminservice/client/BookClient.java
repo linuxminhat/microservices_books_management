@@ -8,6 +8,7 @@ import java.util.Optional;
 
 @FeignClient(name = "book-service")
 public interface BookClient {
+
     @PostMapping("/api/books/internal")
     void saveBook(@RequestBody Book book);
 
@@ -19,4 +20,5 @@ public interface BookClient {
 
     @GetMapping("/api/books/internal/{bookId}")
     Optional<Book> findBookById(@PathVariable Long bookId);
+
 }

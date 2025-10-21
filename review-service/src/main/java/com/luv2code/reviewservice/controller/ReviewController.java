@@ -20,24 +20,24 @@ public class ReviewController {
     public Boolean reviewBookByUser(
             @RequestHeader(value = "Authorization") String token,
             @RequestParam Long bookId) throws Exception {
-        
+
         System.out.println("=== EXTRACTING EMAIL FROM TOKEN ===");
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"email\"");
-        
+
         if (userEmail == null) {
             userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         }
-        
+
         if (userEmail == null) {
             userEmail = ExtractJWT.payloadJWTExtraction(token, "\"https://example.com/email\"");
         }
-        
+
         System.out.println("Extracted email: " + userEmail);
-        
+
         if (userEmail == null) {
             throw new Exception("User email is missing from token");
         }
-        
+
         return reviewService.userReviewListed(userEmail, bookId);
     }
 
@@ -45,24 +45,23 @@ public class ReviewController {
     public void postReview(
             @RequestHeader(value = "Authorization") String token,
             @RequestBody ReviewRequest reviewRequest) throws Exception {
-        
+
         System.out.println("=== POSTING REVIEW ===");
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"email\"");
-        
+
         if (userEmail == null) {
             userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
         }
-        
+
         if (userEmail == null) {
             userEmail = ExtractJWT.payloadJWTExtraction(token, "\"https://example.com/email\"");
         }
-        
+
         System.out.println("User email: " + userEmail);
-        
         if (userEmail == null) {
             throw new Exception("User email is missing from token");
         }
-        
+
         reviewService.postReview(userEmail, reviewRequest);
     }
 }

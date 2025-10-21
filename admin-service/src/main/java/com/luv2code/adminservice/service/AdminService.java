@@ -25,8 +25,7 @@ public class AdminService {
     private final BookClient bookClient;
 
     @Autowired
-    public AdminService(BookRepository bookRepository,
-            ReviewRepository reviewRepository,
+    public AdminService(BookRepository bookRepository, ReviewRepository reviewRepository,
             CheckoutRepository checkoutRepository,
             BookClient bookClient) {
         this.bookRepository = bookRepository;
@@ -58,14 +57,6 @@ public class AdminService {
     }
 
     public void postBook(AddBookRequest addBookRequest) {
-        System.out.println("=== DEBUG POST BOOK ===");
-        System.out.println("Title: " + addBookRequest.getTitle());
-        System.out.println("Author: " + addBookRequest.getAuthor());
-        System.out.println("Description: " + addBookRequest.getDescription());
-        System.out.println("Copies: " + addBookRequest.getCopies());
-        System.out.println("Category: " + addBookRequest.getCategory());
-        System.out.println("Img: " + addBookRequest.getImg());
-        
         try {
             Book book = new Book();
             book.setTitle(addBookRequest.getTitle());
@@ -74,20 +65,38 @@ public class AdminService {
             book.setCopies(addBookRequest.getCopies());
             book.setCopiesAvailable(addBookRequest.getCopies());
             book.setCategory(addBookRequest.getCategory());
-            
-            // Lưu base64 trực tiếp vào database
             book.setImg(addBookRequest.getImg());
-
             Book savedBook = bookRepository.save(book);
-            System.out.println("=== BOOK SAVED TO ADMIN DB WITH ID: " + savedBook.getId() + " ===");
-            
-            bookClient.saveBook(savedBook);
-            System.out.println("=== BOOK SAVED TO BOOK-SERVICE SUCCESSFULLY ===");
-            
+
+            int maxRetries = 3;
+            boolean syncSuccess = false;
+            for (int i = 0; i < maxRetries; i++) {
+                try {
+                    bookClient.saveBook(savedBook);
+                    System.out.println("=== BOOK SYNCED TO BOOK-SERVICE SUCCESSFULLY ===");
+                    syncSuccess = true;
+                    break;
+                } catch (Exception e) {
+                    System.err.println("=== SYNC ATTEMPT " + (i + 1) + " FAILED: " + e.getMessage() + " ===");
+                    e.printStackTrace();
+
+                    if (i == maxRetries - 1) {
+
+                        System.err.println("=== ALL SYNC ATTEMPTS FAILED, ROLLING BACK ===");
+                        bookRepository.delete(savedBook);
+                        throw new Exception("Failed to sync book to book-service after " + maxRetries + " attempts", e);
+                    }
+
+                    Thread.sleep(1000);
+                }
+            }
+            if (!syncSuccess) {
+                throw new Exception("Failed to sync book to book-service");
+            }
         } catch (Exception e) {
-            System.err.println("=== ERROR SAVING BOOK: " + e.getMessage() + " ===");
+            System.err.println("=== ERROR IN POST BOOK: " + e.getMessage() + " ===");
             e.printStackTrace();
-            throw e;
+            throw new RuntimeException(e);
         }
     }
 

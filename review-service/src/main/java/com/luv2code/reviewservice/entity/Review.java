@@ -30,4 +30,5 @@ public class Review {
 
     @Column(name = "review_description")
     private String reviewDescription;
+
 }
