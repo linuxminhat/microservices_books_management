@@ -8,16 +8,16 @@ import { LatestReviews } from "./LatestReviews";
 import { useAuth0 } from "@auth0/auth0-react";
 import ReviewRequestModel from "../../models/ReviewRequestModel";
 import { API_CONFIG } from "../../config/apiConfig";
+import { OutOfStockModal } from "../Utils/OutOfStockModal"; // THÊM IMPORT
 
 export const BookCheckoutPage = () => {
 
-    // const { authState } = useOktaAuth();
     const {
         user,
         loginWithRedirect,
         isAuthenticated,
         getAccessTokenSilently,
-        getIdTokenClaims,  // ← THÊM: để lấy ID Token
+        getIdTokenClaims,
         isLoading: authLoading,
     } = useAuth0();
 
@@ -35,10 +35,12 @@ export const BookCheckoutPage = () => {
     const [isCheckedOut, setIsCheckedOut] = useState(false);
     const [isLoadingBookCheckedOut, setIsLoadingBookCheckedOut] = useState(true);
     const [displayError, setDisplayError] = useState(false);
+    
+    // THÊM STATE CHO MODAL
+    const [showOutOfStockModal, setShowOutOfStockModal] = useState(false);
 
     const bookId = (window.location.pathname).split('/')[2];
 
-    // ← THÊM: Helper function để lấy ID Token (JWS)
     const getIdToken = async () => {
         const claims = await getIdTokenClaims();
         return claims?.__raw || '';
@@ -120,7 +122,7 @@ export const BookCheckoutPage = () => {
         const fetchUserReviewBook = async () => {
             try {
                 if (isAuthenticated) {
-                    const token = await getIdToken();  // ← ĐỔI: dùng ID Token thay vì Access Token
+                    const token = await getIdToken();
                     const url = `${API_CONFIG.REVIEW_SERVICE}/reviews/secure/user/book?bookId=${bookId}`;
                     const response = await fetch(url, {
                         method: "GET",
@@ -142,13 +144,13 @@ export const BookCheckoutPage = () => {
         };
 
         fetchUserReviewBook();
-    }, [isAuthenticated, bookId]);  // ← ĐỔI: bỏ getAccessTokenSilently khỏi dependencies
+    }, [isAuthenticated, bookId]);
 
     useEffect(() => {
         const fetchUserCurrentLoansCount = async () => {
             try {
                 if (isAuthenticated) {
-                    const token = await getIdToken();  // ← ĐỔI: dùng ID Token
+                    const token = await getIdToken();
                     const url = `${process.env.REACT_APP_API}/books/secure/currentloans/count`;
                     const response = await fetch(url, {
                         method: "GET",
@@ -170,13 +172,13 @@ export const BookCheckoutPage = () => {
         };
 
         fetchUserCurrentLoansCount();
-    }, [isAuthenticated, isCheckedOut]);  // ← ĐỔI: bỏ getAccessTokenSilently
+    }, [isAuthenticated, isCheckedOut]);
 
     useEffect(() => {
         const fetchUserCheckedOutBook = async () => {
             try {
                 if (isAuthenticated) {
-                    const token = await getIdToken();  // ← ĐỔI: dùng ID Token
+                    const token = await getIdToken();
                     const url = `${process.env.REACT_APP_API}/books/secure/ischeckedout/byuser?bookId=${bookId}`;
 
                     const response = await fetch(url, {
@@ -199,8 +201,7 @@ export const BookCheckoutPage = () => {
         };
 
         fetchUserCheckedOutBook();
-    }, [isAuthenticated, bookId]);  // ← ĐỔI: bỏ getAccessTokenSilently
-
+    }, [isAuthenticated, bookId]);
 
     if (
         isLoading ||
@@ -221,9 +222,10 @@ export const BookCheckoutPage = () => {
         );
     }
 
+    // SỬA FUNCTION checkoutBook
     async function checkoutBook() {
         try {
-            const token = await getIdToken();  // ← ĐỔI: dùng ID Token
+            const token = await getIdToken();
             const url = `${process.env.REACT_APP_API}/books/secure/checkout?bookId=${book?.id}`;
             const response = await fetch(url, {
                 method: "PUT",
@@ -234,19 +236,31 @@ export const BookCheckoutPage = () => {
             });
 
             if (!response.ok) {
-                setDisplayError(true);
+                // THÊM LOGIC XỬ LÝ LỖI CỤ THỂ
+                if (response.status === 400) {
+                    // Lỗi sách hết hoặc đã mượn
+                    setShowOutOfStockModal(true);
+                    return;
+                } else {
+                    // Lỗi khác (phí, quá hạn, etc.)
+                    setDisplayError(true);
+                }
                 throw new Error("Something went wrong!");
             }
             setDisplayError(false);
             setIsCheckedOut(true);
         } catch (error: any) {
-            setHttpError(error.message);
+            // Chỉ set httpError nếu không phải lỗi out of stock
+            if (!showOutOfStockModal) {
+                setHttpError(error.message);
+            }
         }
     }
+
     async function submitReview(starInput: number, reviewDescription: string) {
         try {
             if (!book?.id) return;
-            const token = await getIdToken();  // ← ĐỔI: dùng ID Token
+            const token = await getIdToken();
 
             const reviewRequestModel = new ReviewRequestModel(starInput, book.id, reviewDescription);
             const url = `${API_CONFIG.REVIEW_SERVICE}/reviews/secure`;
@@ -268,6 +282,13 @@ export const BookCheckoutPage = () => {
 
     return (
         <div>
+            {/* THÊM MODAL */}
+            <OutOfStockModal 
+                show={showOutOfStockModal}
+                onClose={() => setShowOutOfStockModal(false)}
+                bookTitle={book?.title}
+            />
+            
             <div className="container d-none d-lg-block">
                 {displayError && (
                     <div className="alert alert-danger mt-3" role="alert">

@@ -4,8 +4,12 @@ import com.luv2code.bookservice.entity.Book;
 import com.luv2code.bookservice.responsemodels.ShelfCurrentLoansResponse;
 import com.luv2code.bookservice.service.BookService;
 import com.luv2code.bookservice.utils.ExtractJWT;
+import com.luv2code.bookservice.dao.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,10 +20,12 @@ import java.util.Optional;
 public class BookController {
 
     private BookService bookService;
+    private BookRepository bookRepository;
 
     @Autowired
-    public BookController(BookService bookService) {
+    public BookController(BookService bookService, BookRepository bookRepository) {
         this.bookService = bookService;
+        this.bookRepository = bookRepository;
     }
 
     @GetMapping("/secure/currentloans")
@@ -84,13 +90,35 @@ public class BookController {
         bookService.deleteBook(bookId);
     }
 
-    @GetMapping
-    public List<Book> getAllBooks() {
-        return bookService.getAllBooks();
-    }
-
     @GetMapping("/{bookId}")
     public Optional<Book> getBookById(@PathVariable Long bookId) {
         return bookService.findBookById(bookId);
+    }
+
+    // ENDPOINT PHÂN TRANG CHÍNH
+    @GetMapping
+    public Page<Book> getAllBooksWithPagination(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return bookRepository.findAll(pageable);
+    }
+
+    @GetMapping(value = "/search/findByTitleContaining", params = { "title", "page", "size" })
+    public Page<Book> findByTitleContaining(
+            @RequestParam String title,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return bookRepository.findByTitleContaining(title, pageable);
+    }
+
+    @GetMapping(value = "/search/findByCategory", params = { "category", "page", "size" })
+    public Page<Book> findByCategory(
+            @RequestParam String category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return bookRepository.findByCategory(category, pageable);
     }
 }

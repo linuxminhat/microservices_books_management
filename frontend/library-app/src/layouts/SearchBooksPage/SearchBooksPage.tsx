@@ -21,7 +21,6 @@ export const SearchBooksPage = () => {
         const fetchBooks = async () => {
             const baseUrl: string = `${API_CONFIG.BOOK_SERVICE}/books`;
 
-
             let url: string = '';
 
             if (searchUrl === '') {
@@ -31,46 +30,86 @@ export const SearchBooksPage = () => {
                 url = baseUrl + searchWithPage;
             }
 
-            const response = await fetch(url);
+            console.log('=== DEBUG PAGINATION ===');
+            console.log('URL called:', url);
+            console.log('Current page:', currentPage);
+            console.log('Books per page:', booksPerPage);
 
-            if (!response.ok) {
-                throw new Error('Something went wrong!');
+            try {
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error('Something went wrong!');
+                }
+
+                const responseJson = await response.json();
+                console.log('API Response:', responseJson);
+                
+                // XỬ LÝ AN TOÀN - Kiểm tra response structure
+                let responseData = [];
+                let totalElements = 0;
+                let totalPages = 1;
+
+                if (responseJson.content && Array.isArray(responseJson.content)) {
+                    // Spring Data Page format
+                    console.log('Using Spring Data Page format');
+                    responseData = responseJson.content;
+                    totalElements = responseJson.totalElements || 0;
+                    totalPages = responseJson.totalPages || 1;
+                } else if (responseJson._embedded && responseJson._embedded.books) {
+                    // Spring Data REST format
+                    console.log('Using Spring Data REST format');
+                    responseData = responseJson._embedded.books;
+                    totalElements = responseJson.page ? responseJson.page.totalElements : responseData.length;
+                    totalPages = responseJson.page ? responseJson.page.totalPages : 1;
+                } else if (Array.isArray(responseJson)) {
+                    // Simple array format - VẤN ĐỀ Ở ĐÂY!
+                    console.log('Using Simple Array format - THIS IS THE PROBLEM!');
+                    responseData = responseJson;
+                    totalElements = responseData.length;
+                    totalPages = 1; // Luôn là 1 trang
+                } else {
+                    console.error('Unexpected response format:', responseJson);
+                    throw new Error('Unexpected response format from server');
+                }
+
+                console.log('Response data length:', responseData.length);
+                console.log('Total elements:', totalElements);
+                console.log('Total pages:', totalPages);
+
+                setTotalAmountOfBooks(totalElements);
+                setTotalPages(totalPages);
+
+                const loadedBooks: BookModel[] = [];
+
+                for (const key in responseData) {
+                    if (responseData[key]) {
+                        loadedBooks.push({
+                            id: responseData[key].id,
+                            title: responseData[key].title,
+                            author: responseData[key].author,
+                            description: responseData[key].description,
+                            copies: responseData[key].copies,
+                            copiesAvailable: responseData[key].copiesAvailable,
+                            category: responseData[key].category,
+                            img: responseData[key].img,
+                        });
+                    }
+                }
+
+                console.log('Loaded books count:', loadedBooks.length);
+                console.log('=== END DEBUG ===');
+
+                setBooks(loadedBooks);
+                setIsLoading(false);
+            } catch (error: any) {
+                console.error('Fetch error:', error);
+                setIsLoading(false);
+                setHttpError(error.message);
             }
-
-            const responseJson = await response.json();
-
-            const responseData = responseJson._embedded ? responseJson._embedded.books : responseJson;
-
-            if (responseJson.page) {
-                setTotalAmountOfBooks(responseJson.page.totalElements);
-                setTotalPages(responseJson.page.totalPages);
-            } else {
-                setTotalAmountOfBooks(responseData.length);
-                setTotalPages(1);
-            }
-
-            const loadedBooks: BookModel[] = [];
-
-            for (const key in responseData) {
-                loadedBooks.push({
-                    id: responseData[key].id,
-                    title: responseData[key].title,
-                    author: responseData[key].author,
-                    description: responseData[key].description,
-                    copies: responseData[key].copies,
-                    copiesAvailable: responseData[key].copiesAvailable,
-                    category: responseData[key].category,
-                    img: responseData[key].img,
-                });
-            }
-
-            setBooks(loadedBooks);
-            setIsLoading(false);
         };
-        fetchBooks().catch((error: any) => {
-            setIsLoading(false);
-            setHttpError(error.message);
-        })
+        
+        fetchBooks();
         window.scrollTo(0, 0);
     }, [currentPage, searchUrl]);
 
@@ -83,7 +122,7 @@ export const SearchBooksPage = () => {
     if (httpError) {
         return (
             <div className='container m-5'>
-                <p>{httpError}</p>
+                <p>Error: {httpError}</p>
             </div>
         )
     }
@@ -209,4 +248,3 @@ export const SearchBooksPage = () => {
         </div>
     );
 }
-

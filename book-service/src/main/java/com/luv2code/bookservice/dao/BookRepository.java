@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@RepositoryRestResource(collectionResourceRel = "books", path = "books")
+@RepositoryRestResource(collectionResourceRel = "books", path = "books", exported = false)
 public interface BookRepository extends JpaRepository<Book, Long> {
     
     Page<Book> findByTitleContaining(@RequestParam("title") String title, Pageable pageable);

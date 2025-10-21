@@ -9,7 +9,12 @@ export const CheckoutAndReviewBox: React.FC<{ book: BookModel | undefined, mobil
     function buttonRender() {
         if (props.isAuthenticated) {
             if (!props.isCheckedOut && props.currentLoansCount < 5) {
-                return (<button onClick={() => props.checkoutBook()} className='btn btn-success btn-lg'>Checkout</button>)
+                // KIỂM TRA SÁCH CÓ SẴN KHÔNG
+                if (props.book && props.book.copiesAvailable && props.book.copiesAvailable > 0) {
+                    return (<button onClick={() => props.checkoutBook()} className='btn btn-success btn-lg'>Checkout</button>)
+                } else {
+                    return (<button disabled className='btn btn-secondary btn-lg'>Out of Stock</button>)
+                }
             } else if (props.isCheckedOut) {
                 return (<p><b>Book checked out. Enjoy!</b></p>)
             } else if (!props.isCheckedOut) {
