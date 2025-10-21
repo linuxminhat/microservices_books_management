@@ -6,7 +6,6 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class FallbackController {
-
     @RequestMapping("/fallback")
     public Mono<String> fallback() {
         return Mono.just("Service is temporarily unavailable. Please try again later.");

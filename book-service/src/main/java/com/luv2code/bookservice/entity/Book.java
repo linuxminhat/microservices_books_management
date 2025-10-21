@@ -31,6 +31,7 @@ public class Book {
     @Column(name = "category")
     private String category;
 
-    @Column(name = "img")
+    @Lob
+    @Column(name = "img", columnDefinition = "LONGTEXT")
     private String img;
 }

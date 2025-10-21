@@ -28,6 +28,11 @@ export const ChangeQuantityOfBooks = () => {
             }
 
             const responseJson = await response.json();
+            
+            // THÊM DEBUG LOG
+            console.log("=== API RESPONSE ===");
+            console.log("Full response:", responseJson);
+            console.log("Books data:", responseJson._embedded?.books);
 
             const responseData = responseJson._embedded.books;
 
@@ -37,6 +42,14 @@ export const ChangeQuantityOfBooks = () => {
             const loadedBooks: BookModel[] = [];
 
             for (const key in responseData) {
+                // THÊM DEBUG LOG CHO TỪNG BOOK
+                console.log(`Book ${key}:`, {
+                    id: responseData[key].id,
+                    title: responseData[key].title,
+                    img: responseData[key].img,
+                    imgLength: responseData[key].img?.length
+                });
+                
                 loadedBooks.push({
                     id: responseData[key].id,
                     title: responseData[key].title,

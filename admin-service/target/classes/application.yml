@@ -8,27 +8,27 @@ spring:
       enabled: true
       import-check:
         enabled: false
-  
+
   datasource:
-    url: jdbc:mysql://localhost:3306/mylibrarydb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/bookdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: 
     driver-class-name: com.mysql.cj.jdbc.Driver
-  
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-  
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
   data:
     rest:
       base-path: /api
 
 server:
-  port: 8083
+  port: 8081
 
 eureka:
   client:
@@ -45,3 +45,8 @@ management:
   endpoint:
     health:
       show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.openfeign: DEBUG
+    com.luv2code.adminservice.client: DEBUG

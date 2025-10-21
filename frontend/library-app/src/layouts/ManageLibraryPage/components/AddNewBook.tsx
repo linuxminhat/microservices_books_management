@@ -48,13 +48,14 @@ export const AddNewBook = () => {
             return;
         }
 
-        // Validate form fields
+        // Validate form fields - SỬA LẠI VALIDATION
         if (
-            title === "" ||
-            author === "" ||
+            title.trim() === "" ||
+            author.trim() === "" ||
             category === "Category" ||
-            description === "" ||
-            copies < 0
+            description.trim() === "" ||
+            copies <= 0 ||
+            !selectedImage
         ) {
             setDisplayWarning(true);
             setDisplaySuccess(false);
@@ -86,7 +87,7 @@ export const AddNewBook = () => {
             const response = await fetch(url, requestOptions);
             if (!response.ok) throw new Error("Something went wrong!");
 
-            // Reset form fields
+            // Reset form fields - SỬA CÁCH RESET
             setTitle("");
             setAuthor("");
             setDescription("");

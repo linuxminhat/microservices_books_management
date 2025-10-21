@@ -3,6 +3,13 @@ import { useAuth0 } from "@auth0/auth0-react";
 import BookModel from "../../../models/BookModel";
 
 export const ChangeQuantityOfBook: React.FC<{ book: BookModel; deleteBook: any }> = (props) => {
+    // THÊM DEBUG LOG
+    console.log("=== RENDERING BOOK ===");
+    console.log("Book props:", props.book);
+    console.log("Book img:", props.book.img);
+    console.log("Book img type:", typeof props.book.img);
+    console.log("Book img starts with data:", props.book.img?.startsWith('data:image'));
+
     const { isAuthenticated, getIdTokenClaims, loginWithRedirect } = useAuth0();
 
     // Helper: lấy ID Token (JWT chứa userType)

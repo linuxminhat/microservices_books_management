@@ -1,6 +1,5 @@
 server:
   port: 8090
-
 spring:
   application:
     name: api-gateway
@@ -12,8 +11,6 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
-
-      # CORS toàn cục tại Gateway (frontend chạy ở 3000)
       globalcors:
         add-to-simple-url-handler-mapping: true
         corsConfigurations:
@@ -28,13 +25,12 @@ spring:
               - OPTIONS
             allowedHeaders: "*"
             allowCredentials: true
-
-      # Khử trùng lặp CORS headers giữa Gateway và downstream services
+            
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
-
+      
+      #book-service 
       routes:
-        # Book service (REST + secure endpoints)
         - id: book-service
           uri: lb://book-service
           predicates:
@@ -44,8 +40,6 @@ spring:
               args:
                 name: book-service
                 fallbackUri: forward:/fallback
-
-        # Spring Data REST histories (nằm trong book-service)
         - id: book-service-histories
           uri: lb://book-service
           predicates:
@@ -56,7 +50,7 @@ spring:
                 name: book-service
                 fallbackUri: forward:/fallback
 
-        # Admin service
+          #admin-service
         - id: admin-service
           uri: lb://admin-service
           predicates:
@@ -66,8 +60,6 @@ spring:
               args:
                 name: admin-service
                 fallbackUri: forward:/fallback
-
-        # Review service
         - id: review-service
           uri: lb://review-service
           predicates:
@@ -78,7 +70,7 @@ spring:
                 name: review-service
                 fallbackUri: forward:/fallback
 
-        # Message service
+          #message-service 
         - id: message-service
           uri: lb://message-service
           predicates:

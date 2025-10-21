@@ -63,7 +63,6 @@ public class BookController {
         bookService.renewLoan(userEmail, bookId);
     }
 
-    // Internal endpoints for other microservices
     @GetMapping("/internal/{bookId}")
     public Optional<Book> findBookById(@PathVariable Long bookId) {
         return bookService.findBookById(bookId);

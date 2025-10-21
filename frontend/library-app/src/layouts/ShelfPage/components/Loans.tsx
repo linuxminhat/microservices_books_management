@@ -9,7 +9,6 @@ export const Loans = () => {
     const { isAuthenticated, isLoading, getIdTokenClaims } = useAuth0();
     const [httpError, setHttpError] = useState<string | null>(null);
 
-    // Current Loans
     const [shelfCurrentLoans, setShelfCurrentLoans] = useState<ShelfCurrentLoans[]>([]);
     const [isLoadingUserLoans, setIsLoadingUserLoans] = useState(true);
     const [checkout, setCheckout] = useState(false);
