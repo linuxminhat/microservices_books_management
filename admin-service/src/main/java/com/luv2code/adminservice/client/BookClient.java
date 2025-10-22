@@ -3,7 +3,6 @@ package com.luv2code.adminservice.client;
 import com.luv2code.adminservice.entity.Book;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Optional;
 
 @FeignClient(name = "book-service")

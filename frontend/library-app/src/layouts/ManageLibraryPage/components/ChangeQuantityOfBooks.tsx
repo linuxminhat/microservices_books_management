@@ -4,6 +4,7 @@ import BookModel from '../../../models/BookModel';
 import { SpinnerLoading } from '../../Utils/SpinnerLoading';
 import { Pagination } from '../../Utils/Pagination';
 import { ChangeQuantityOfBook } from "./ChangeQuantityOfBook";
+import { API_CONFIG } from '../../../config/apiConfig';
 
 export const ChangeQuantityOfBooks = () => {
 
@@ -19,8 +20,7 @@ export const ChangeQuantityOfBooks = () => {
 
     useEffect(() => {
         const fetchBooks = async () => {
-            const baseUrl: string = `${process.env.REACT_APP_API}/books?page=${currentPage - 1}&size=${booksPerPage}`;
-
+            const baseUrl: string = `${API_CONFIG.BOOK_SERVICE}/books?page=${currentPage - 1}&size=${booksPerPage}`;
             const response = await fetch(baseUrl);
 
             if (!response.ok) {
@@ -28,28 +28,26 @@ export const ChangeQuantityOfBooks = () => {
             }
 
             const responseJson = await response.json();
-            
+
             // THÊM DEBUG LOG
             console.log("=== API RESPONSE ===");
             console.log("Full response:", responseJson);
             console.log("Books data:", responseJson._embedded?.books);
 
-            const responseData = responseJson._embedded.books;
+            const responseData = responseJson.content || responseJson._embedded?.books || responseJson;
 
-            setTotalAmountOfBooks(responseJson.page.totalElements);
-            setTotalPages(responseJson.page.totalPages);
+            setTotalAmountOfBooks(responseJson.totalElements || responseJson.page?.totalElements || 0);
+            setTotalPages(responseJson.totalPages || responseJson.page?.totalPages || 1);
 
             const loadedBooks: BookModel[] = [];
-
             for (const key in responseData) {
-                // THÊM DEBUG LOG CHO TỪNG BOOK
                 console.log(`Book ${key}:`, {
                     id: responseData[key].id,
                     title: responseData[key].title,
                     img: responseData[key].img,
                     imgLength: responseData[key].img?.length
                 });
-                
+
                 loadedBooks.push({
                     id: responseData[key].id,
                     title: responseData[key].title,
@@ -82,7 +80,7 @@ export const ChangeQuantityOfBooks = () => {
 
     if (isLoading) {
         return (
-            <SpinnerLoading/>
+            <SpinnerLoading />
         );
     }
 
@@ -102,16 +100,16 @@ export const ChangeQuantityOfBooks = () => {
                         <h3>Number of results: ({totalAmountOfBooks})</h3>
                     </div>
                     <p>
-                        {indexOfFirstBook + 1} to {lastItem} of {totalAmountOfBooks} items: 
+                        {indexOfFirstBook + 1} to {lastItem} of {totalAmountOfBooks} items:
                     </p>
                     {books.map(book => (
-                       <ChangeQuantityOfBook book={book} key={book.id} deleteBook={deleteBook}/>
+                        <ChangeQuantityOfBook book={book} key={book.id} deleteBook={deleteBook} />
                     ))}
                 </>
                 :
                 <h5>Add a book before changing quantity</h5>
             }
-            {totalPages > 1 && <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate}/>}
+            {totalPages > 1 && <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />}
         </div>
     );
 }

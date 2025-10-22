@@ -29,7 +29,6 @@ export const ReviewListPage = () => {
             }
 
             const responseJsonReviews = await responseReviews.json();
-
             const responseData = responseJsonReviews._embedded.reviews;
 
             setTotalAmountOfReviews(responseJsonReviews.page.totalElements);
@@ -70,7 +69,6 @@ export const ReviewListPage = () => {
             </div>
         );
     }
-
 
     const indexOfLastReview: number = currentPage * reviewsPerPage;
     const indexOfFirstReview: number = indexOfLastReview - reviewsPerPage;

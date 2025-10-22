@@ -10,7 +10,6 @@ import { ShelfPage } from "./layouts/ShelfPage/ShelfPage";
 import { MessagesPage } from "./layouts/MessagesPage/MessagesPage";
 import { ManageLibraryPage } from "./layouts/ManageLibraryPage/ManageLibraryPage";
 import { ReviewListPage } from "./layouts/BookCheckoutPage/ReviewListPage/ReviewListPage";
-import { PaymentPage } from "./layouts/PaymentPage/PaymentPage";
 import LoginWidget from "./Auth/LoginWidget";
 import CallbackPage from "./Auth/CallbackPage";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
@@ -24,12 +23,10 @@ export const App = () => {
     return <SpinnerLoading />;
   }
 
-  // 👇 Same concept as Okta's customAuthHandler — if unauthenticated, redirect to /login
   const customAuthHandler = () => {
     history.push("/login");
   };
 
-  // 👇 Equivalent of SecureRoute in Auth0
   const ProtectedRoute = ({ component, ...args }: any) => {
     const Component = withAuthenticationRequired(component, {
       onRedirecting: () => <SpinnerLoading />,
@@ -63,19 +60,14 @@ export const App = () => {
             <BookCheckoutPage />
           </Route>
 
-          {/* Equivalent of Okta’s /login and LoginWidget */}
           <Route path="/login" render={() => <LoginWidget />} />
 
-          {/* Equivalent of Okta's /login/callback */}
           <Route path="/callback">
             <CallbackPage />
           </Route>
-
-          {/* Protected routes (Auth0’s version of SecureRoute) */}
           <ProtectedRoute path="/shelf" component={ShelfPage} />
           <ProtectedRoute path="/messages" component={MessagesPage} />
           <ProtectedRoute path="/admin" component={ManageLibraryPage} />
-          <ProtectedRoute path="/fees" component={PaymentPage} />
         </Switch>
       </div>
       <Footer />

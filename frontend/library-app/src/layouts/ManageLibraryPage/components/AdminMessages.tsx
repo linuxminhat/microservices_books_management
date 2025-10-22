@@ -40,8 +40,7 @@ export const AdminMessages = () => {
                 }
 
                 const token = await getAccessTokenSilently();
-                const url = `${process.env.REACT_APP_API}/messages/search/findByClosed/?closed=false&page=${currentPage - 1
-                    }&size=${messagesPerPage}`;
+                const url = `${process.env.REACT_APP_API}/messages/search/findByClosed?closed=false&page=${currentPage - 1}&size=${messagesPerPage}`;
 
                 const response = await fetch(url, {
                     method: "GET",

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import BookModel from "../../../models/BookModel";
+import { API_CONFIG } from '../../../config/apiConfig';
 
 export const ChangeQuantityOfBook: React.FC<{ book: BookModel; deleteBook: any }> = (props) => {
     // THÊM DEBUG LOG
@@ -11,8 +12,6 @@ export const ChangeQuantityOfBook: React.FC<{ book: BookModel; deleteBook: any }
     console.log("Book img starts with data:", props.book.img?.startsWith('data:image'));
 
     const { isAuthenticated, getIdTokenClaims, loginWithRedirect } = useAuth0();
-
-    // Helper: lấy ID Token (JWT chứa userType)
     const getIdToken = async () => (await getIdTokenClaims())?.__raw || "";
 
     const [quantity, setQuantity] = useState<number>(0);
@@ -34,8 +33,7 @@ export const ChangeQuantityOfBook: React.FC<{ book: BookModel; deleteBook: any }
 
         try {
             const token = await getIdToken();
-            const url = `${process.env.REACT_APP_API}/admin/secure/increase/book/quantity/?bookId=${props.book?.id}`;
-            const response = await fetch(url, {
+            const url = `${API_CONFIG.ADMIN_SERVICE}/admin/secure/increase/book/quantity?bookId=${props.book?.id}`; const response = await fetch(url, {
                 method: "PUT",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -59,8 +57,7 @@ export const ChangeQuantityOfBook: React.FC<{ book: BookModel; deleteBook: any }
 
         try {
             const token = await getIdToken();
-            const url = `${process.env.REACT_APP_API}/admin/secure/decrease/book/quantity/?bookId=${props.book?.id}`;
-            const response = await fetch(url, {
+            const url = `${API_CONFIG.ADMIN_SERVICE}/admin/secure/decrease/book/quantity?bookId=${props.book?.id}`; const response = await fetch(url, {
                 method: "PUT",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -84,8 +81,7 @@ export const ChangeQuantityOfBook: React.FC<{ book: BookModel; deleteBook: any }
 
         try {
             const token = await getIdToken();
-            const url = `${process.env.REACT_APP_API}/admin/secure/delete/book/?bookId=${props.book?.id}`;
-            const response = await fetch(url, {
+            const url = `${API_CONFIG.ADMIN_SERVICE}/admin/secure/delete/book?bookId=${props.book?.id}`; const response = await fetch(url, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,

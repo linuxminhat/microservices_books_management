@@ -44,30 +44,27 @@ export const SearchBooksPage = () => {
 
                 const responseJson = await response.json();
                 console.log('API Response:', responseJson);
-                
-                // XỬ LÝ AN TOÀN - Kiểm tra response structure
+
                 let responseData = [];
                 let totalElements = 0;
                 let totalPages = 1;
 
                 if (responseJson.content && Array.isArray(responseJson.content)) {
-                    // Spring Data Page format
+
                     console.log('Using Spring Data Page format');
                     responseData = responseJson.content;
                     totalElements = responseJson.totalElements || 0;
                     totalPages = responseJson.totalPages || 1;
                 } else if (responseJson._embedded && responseJson._embedded.books) {
-                    // Spring Data REST format
                     console.log('Using Spring Data REST format');
                     responseData = responseJson._embedded.books;
                     totalElements = responseJson.page ? responseJson.page.totalElements : responseData.length;
                     totalPages = responseJson.page ? responseJson.page.totalPages : 1;
                 } else if (Array.isArray(responseJson)) {
-                    // Simple array format - VẤN ĐỀ Ở ĐÂY!
                     console.log('Using Simple Array format - THIS IS THE PROBLEM!');
                     responseData = responseJson;
                     totalElements = responseData.length;
-                    totalPages = 1; // Luôn là 1 trang
+                    totalPages = 1;
                 } else {
                     console.error('Unexpected response format:', responseJson);
                     throw new Error('Unexpected response format from server');
@@ -108,7 +105,7 @@ export const SearchBooksPage = () => {
                 setHttpError(error.message);
             }
         };
-        
+
         fetchBooks();
         window.scrollTo(0, 0);
     }, [currentPage, searchUrl]);
@@ -146,7 +143,7 @@ export const SearchBooksPage = () => {
             value.toLowerCase() === 'devops'
         ) {
             setCategorySelection(value);
-            // Map frontend value to database value
+
             let categoryValue = value;
             if (value.toLowerCase() === 'fe') categoryValue = 'Frontend';
             if (value.toLowerCase() === 'be') categoryValue = 'Backend';

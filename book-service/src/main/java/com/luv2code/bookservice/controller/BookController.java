@@ -95,7 +95,6 @@ public class BookController {
         return bookService.findBookById(bookId);
     }
 
-    // ENDPOINT PHÂN TRANG CHÍNH
     @GetMapping
     public Page<Book> getAllBooksWithPagination(
             @RequestParam(defaultValue = "0") int page,

@@ -37,4 +37,5 @@ public class MessagesService {
         message.get().setClosed(true);
         messageRepository.save(message.get());
     }
+
 }

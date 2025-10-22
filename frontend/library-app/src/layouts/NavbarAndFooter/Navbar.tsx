@@ -29,10 +29,6 @@ export const Navbar = () => {
     });
   };
 
-  // Điều kiện admin đồng bộ với trang Admin:
-  // - userType trong ID Token (không namespace)
-  // - userType dạng namespaced (thay namespace theo cấu hình của bạn nếu cần)
-  // - roles namespaced chứa 'admin' (nếu bạn dùng roles)
   const isAdmin =
     (user?.["userType"] === "admin") ||
     (user?.["https://your-namespace.com/userType"] === "admin") ||
@@ -65,15 +61,16 @@ export const Navbar = () => {
               </li>
             }
             {isAuthenticated &&
-              <li className='nav-item'>
-                <NavLink className='nav-link' to='/fees'>Pay Fees</NavLink>
-              </li>
-            }
+  <li className='nav-item'>
+    <NavLink className='nav-link' to='/messages'>Messages</NavLink>
+  </li>
+}
             {isAuthenticated && isAdmin &&
               <li className='nav-item'>
                 <NavLink className='nav-link' to='/admin'>Admin</NavLink>
               </li>
             }
+            
           </ul>
           <ul className='navbar-nav ms-auto'>
             {!isAuthenticated ?

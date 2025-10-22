@@ -8,10 +8,8 @@ import { LatestReviews } from "./LatestReviews";
 import { useAuth0 } from "@auth0/auth0-react";
 import ReviewRequestModel from "../../models/ReviewRequestModel";
 import { API_CONFIG } from "../../config/apiConfig";
-import { OutOfStockModal } from "../Utils/OutOfStockModal"; // THÊM IMPORT
-
+import { OutOfStockModal } from "../Utils/OutOfStockModal";
 export const BookCheckoutPage = () => {
-
     const {
         user,
         loginWithRedirect,
@@ -27,7 +25,6 @@ export const BookCheckoutPage = () => {
     const [reviews, setReviews] = useState<ReviewModel[]>([])
     const [totalStars, setTotalStars] = useState(0);
     const [isLoadingReview, setIsLoadingReview] = useState(true);
-
     const [isReviewLeft, setIsReviewLeft] = useState(false);
     const [isLoadingUserReview, setIsLoadingUserReview] = useState(true);
     const [currentLoansCount, setCurrentLoansCount] = useState(0);
@@ -35,22 +32,20 @@ export const BookCheckoutPage = () => {
     const [isCheckedOut, setIsCheckedOut] = useState(false);
     const [isLoadingBookCheckedOut, setIsLoadingBookCheckedOut] = useState(true);
     const [displayError, setDisplayError] = useState(false);
-    
-    // THÊM STATE CHO MODAL
     const [showOutOfStockModal, setShowOutOfStockModal] = useState(false);
 
-    const bookId = (window.location.pathname).split('/')[2];
+    const bookId = window.location.pathname.split('/')[2];
+    console.log("BookId:", bookId, "URL:", window.location.pathname);
 
     const getIdToken = async () => {
         const claims = await getIdTokenClaims();
         return claims?.__raw || '';
     };
 
-    //fetch book 
     useEffect(() => {
         const fetchBook = async () => {
             try {
-                const baseUrl = `${process.env.REACT_APP_API}/books/${bookId}`;
+                const baseUrl = `${API_CONFIG.BOOK_SERVICE}/books/${bookId}`;
                 const response = await fetch(baseUrl);
                 if (!response.ok) throw new Error("Something went wrong!");
 
@@ -77,7 +72,6 @@ export const BookCheckoutPage = () => {
         fetchBook();
     }, [isCheckedOut, bookId]);
 
-    //fet revuews 
     useEffect(() => {
         const fetchBookReviews = async () => {
             try {
@@ -116,7 +110,51 @@ export const BookCheckoutPage = () => {
 
         fetchBookReviews();
     }, [bookId, isReviewLeft]);
+    useEffect(() => {
+        const handleRefreshReviews = () => {
+            const fetchBookReviews = async () => {
+                try {
+                    const reviewUrl = `${API_CONFIG.REVIEW_SERVICE}/reviews/search/findByBookId?bookId=${bookId}`;
+                    const response = await fetch(reviewUrl);
+                    if (!response.ok) throw new Error("Something went wrong!");
+                    const data = await response.json();
+                    const reviewsData = data._embedded.reviews;
+                    const loadedReviews: ReviewModel[] = [];
+                    let weightedStars = 0;
 
+                    for (const key in reviewsData) {
+                        loadedReviews.push({
+                            id: reviewsData[key].id,
+                            userEmail: reviewsData[key].userEmail,
+                            date: reviewsData[key].date,
+                            rating: reviewsData[key].rating,
+                            book_id: reviewsData[key].bookId,
+                            reviewDescription: reviewsData[key].reviewDescription,
+                        });
+                        weightedStars += reviewsData[key].rating;
+                    }
+
+                    if (loadedReviews.length > 0) {
+                        const avg = Math.round((weightedStars / loadedReviews.length) * 2) / 2;
+                        setTotalStars(avg);
+                    }
+
+                    setReviews(loadedReviews);
+                } catch (error: any) {
+                    setHttpError(error.message);
+                }
+            };
+
+            fetchBookReviews();
+        };
+
+        // Thêm event listener
+        window.addEventListener('refreshReviews', handleRefreshReviews);
+
+        return () => {
+            window.removeEventListener('refreshReviews', handleRefreshReviews);
+        };
+    }, [bookId]);
     //fetch UserReview 
     useEffect(() => {
         const fetchUserReviewBook = async () => {
@@ -151,7 +189,7 @@ export const BookCheckoutPage = () => {
             try {
                 if (isAuthenticated) {
                     const token = await getIdToken();
-                    const url = `${process.env.REACT_APP_API}/books/secure/currentloans/count`;
+                    const url = `${API_CONFIG.BOOK_SERVICE}/books/secure/currentloans/count`;
                     const response = await fetch(url, {
                         method: "GET",
                         headers: {
@@ -179,7 +217,7 @@ export const BookCheckoutPage = () => {
             try {
                 if (isAuthenticated) {
                     const token = await getIdToken();
-                    const url = `${process.env.REACT_APP_API}/books/secure/ischeckedout/byuser?bookId=${bookId}`;
+                    const url = `${API_CONFIG.BOOK_SERVICE}/books/secure/ischeckedout/byuser?bookId=${bookId}`;
 
                     const response = await fetch(url, {
                         method: "GET",
@@ -222,11 +260,10 @@ export const BookCheckoutPage = () => {
         );
     }
 
-    // SỬA FUNCTION checkoutBook
     async function checkoutBook() {
         try {
             const token = await getIdToken();
-            const url = `${process.env.REACT_APP_API}/books/secure/checkout?bookId=${book?.id}`;
+            const url = `${API_CONFIG.BOOK_SERVICE}/books/secure/checkout?bookId=${book?.id}`;
             const response = await fetch(url, {
                 method: "PUT",
                 headers: {
@@ -236,13 +273,10 @@ export const BookCheckoutPage = () => {
             });
 
             if (!response.ok) {
-                // THÊM LOGIC XỬ LÝ LỖI CỤ THỂ
                 if (response.status === 400) {
-                    // Lỗi sách hết hoặc đã mượn
                     setShowOutOfStockModal(true);
                     return;
                 } else {
-                    // Lỗi khác (phí, quá hạn, etc.)
                     setDisplayError(true);
                 }
                 throw new Error("Something went wrong!");
@@ -250,7 +284,6 @@ export const BookCheckoutPage = () => {
             setDisplayError(false);
             setIsCheckedOut(true);
         } catch (error: any) {
-            // Chỉ set httpError nếu không phải lỗi out of stock
             if (!showOutOfStockModal) {
                 setHttpError(error.message);
             }
@@ -280,15 +313,15 @@ export const BookCheckoutPage = () => {
         }
     }
 
+
     return (
         <div>
-            {/* THÊM MODAL */}
-            <OutOfStockModal 
+            <OutOfStockModal
                 show={showOutOfStockModal}
                 onClose={() => setShowOutOfStockModal(false)}
                 bookTitle={book?.title}
             />
-            
+
             <div className="container d-none d-lg-block">
                 {displayError && (
                     <div className="alert alert-danger mt-3" role="alert">
@@ -331,7 +364,6 @@ export const BookCheckoutPage = () => {
                 <LatestReviews reviews={reviews} bookId={book?.id} mobile={false} />
             </div>
 
-            {/* Mobile view */}
             <div className="container d-lg-none mt-5">
                 {displayError && (
                     <div className="alert alert-danger mt-3" role="alert">

@@ -8,7 +8,7 @@ export const AddNewBook = () => {
     // Helper: lấy ID Token (JWT chứa userType)
     const getIdToken = async () => (await getIdTokenClaims())?.__raw || "";
 
-    // New Book fields
+
     const [title, setTitle] = useState("");
     const [author, setAuthor] = useState("");
     const [description, setDescription] = useState("");
@@ -42,13 +42,11 @@ export const AddNewBook = () => {
     }
 
     async function submitNewBook() {
-        // Require authentication
         if (!isAuthenticated) {
             await loginWithRedirect();
             return;
         }
 
-        // Validate form fields - SỬA LẠI VALIDATION
         if (
             title.trim() === "" ||
             author.trim() === "" ||
@@ -86,8 +84,6 @@ export const AddNewBook = () => {
 
             const response = await fetch(url, requestOptions);
             if (!response.ok) throw new Error("Something went wrong!");
-
-            // Reset form fields - SỬA CÁCH RESET
             setTitle("");
             setAuthor("");
             setDescription("");

@@ -23,8 +23,13 @@ export const Carousel = () => {
             }
 
             const responseJson = await response.json();
-
-            const responseData = responseJson._embedded ? responseJson._embedded.books : responseJson;
+            console.log("=== CAROUSEL DEBUG ===");
+            console.log("API Response:", responseJson);
+            console.log("Response type:", typeof responseJson);
+            console.log("Has content:", !!responseJson.content);
+            console.log("Has _embedded:", !!responseJson._embedded);
+            console.log("=====================");
+            const responseData = responseJson.content || responseJson._embedded?.books || responseJson;
 
             const loadedBooks: BookModel[] = [];
 

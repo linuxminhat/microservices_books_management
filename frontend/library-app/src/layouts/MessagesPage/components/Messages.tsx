@@ -15,11 +15,7 @@ export const Messages = () => {
 
     const [isLoadingMessages, setIsLoadingMessages] = useState(true);
     const [httpError, setHttpError] = useState<string | null>(null);
-
-    // Messages
     const [messages, setMessages] = useState<MessageModel[]>([]);
-
-    //Pagination 
     const [messagesPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
@@ -27,19 +23,15 @@ export const Messages = () => {
     useEffect(() => {
         const fetchUserMessages = async () => {
             try {
-                // Redirect to login if user not authenticated
                 if (!isAuthenticated) {
                     await loginWithRedirect();
                     return;
                 }
 
                 const token = await getAccessTokenSilently();
-
-                // Use Auth0 user email (or sub if you prefer unique id)
                 const userEmail = user?.email || user?.sub;
 
-                const url = `${process.env.REACT_APP_API}/messages/search/findByUserEmail/?userEmail=${userEmail}&page=${currentPage - 1
-                    }&size=${messagesPerPage}`;
+                const url = `${process.env.REACT_APP_API}/messages/search/findByUserEmail?user_email=${userEmail}&page=${currentPage - 1}&size=${messagesPerPage}`;
 
                 const response = await fetch(url, {
                     method: "GET",
