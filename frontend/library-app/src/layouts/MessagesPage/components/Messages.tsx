@@ -29,8 +29,6 @@ export const Messages = () => {
                 }
 
                 const token = await getAccessTokenSilently();
-                
-                // Lấy email từ Auth0 user object - thử nhiều cách
                 let userEmail = user?.email;
                 if (!userEmail) {
                     userEmail = user?.['https://example.com/email'];
@@ -38,7 +36,7 @@ export const Messages = () => {
                 if (!userEmail) {
                     userEmail = user?.sub;
                 }
-                
+
                 console.log("=== DEBUG USER MESSAGES ===");
                 console.log("User object:", user);
                 console.log("User email:", userEmail);
@@ -47,10 +45,7 @@ export const Messages = () => {
                 if (!userEmail) {
                     throw new Error("Cannot get user email from Auth0");
                 }
-
-                // Gọi API để lấy messages của user hiện tại
-// Thay đổi URL từ API Gateway sang message-service trực tiếp (dòng 54)
-const url = `${process.env.REACT_APP_API}/messages/search/findByUserEmail?user_email=${encodeURIComponent(userEmail)}&page=${currentPage - 1}&size=${messagesPerPage}`;                console.log("Fetching URL:", url);
+                const url = `${process.env.REACT_APP_API}/messages/search/findByUserEmail?user_email=${encodeURIComponent(userEmail)}&page=${currentPage - 1}&size=${messagesPerPage}`; console.log("Fetching URL:", url);
 
                 const response = await fetch(url, {
                     method: "GET",
@@ -59,7 +54,6 @@ const url = `${process.env.REACT_APP_API}/messages/search/findByUserEmail?user_e
                         "Content-Type": "application/json",
                     },
                 });
-
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error("API Error:", response.status, errorText);
@@ -68,7 +62,7 @@ const url = `${process.env.REACT_APP_API}/messages/search/findByUserEmail?user_e
 
                 const data = await response.json();
                 console.log("Messages data:", data);
-                
+
                 // Kiểm tra cấu trúc response
                 if (data._embedded && data._embedded.messages) {
                     setMessages(data._embedded.messages);
