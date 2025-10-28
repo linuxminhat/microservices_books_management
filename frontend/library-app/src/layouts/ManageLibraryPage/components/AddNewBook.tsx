@@ -15,8 +15,6 @@ export const AddNewBook = () => {
     const [copies, setCopies] = useState(0);
     const [category, setCategory] = useState("Category");
     const [selectedImage, setSelectedImage] = useState<any>(null);
-
-    // Display states
     const [displayWarning, setDisplayWarning] = useState(false);
     const [displaySuccess, setDisplaySuccess] = useState(false);
 
@@ -29,7 +27,6 @@ export const AddNewBook = () => {
             getBase64(e.target.files[0]);
         }
     }
-
     function getBase64(file: any) {
         let reader = new FileReader();
         reader.readAsDataURL(file);
@@ -72,7 +69,6 @@ export const AddNewBook = () => {
                 category
             );
             book.img = selectedImage;
-
             const requestOptions = {
                 method: "POST",
                 headers: {

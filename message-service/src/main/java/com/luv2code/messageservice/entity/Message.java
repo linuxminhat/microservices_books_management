@@ -16,6 +16,13 @@ public class Message {
         this.question = question;
     }
 
+    // Thêm constructor mới
+    public Message(String title, String question, String userEmail) {
+        this.title = title;
+        this.question = question;
+        this.userEmail = userEmail;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

@@ -3,7 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import MessageModel from "../../../models/MessageModel";
 
 export const PostNewMessage = () => {
-    const { isAuthenticated, getAccessTokenSilently, loginWithRedirect } = useAuth0();
+    const { isAuthenticated, getAccessTokenSilently, user, loginWithRedirect } = useAuth0();
 
     const [title, setTitle] = useState("");
     const [question, setQuestion] = useState("");
@@ -12,13 +12,11 @@ export const PostNewMessage = () => {
 
     async function submitNewQuestion() {
         try {
-            // Ensure login
             if (!isAuthenticated) {
                 await loginWithRedirect();
                 return;
             }
 
-            // Validate inputs
             if (title.trim() === "" || question.trim() === "") {
                 setDisplayWarning(true);
                 setDisplaySuccess(false);
@@ -26,9 +24,28 @@ export const PostNewMessage = () => {
             }
 
             const token = await getAccessTokenSilently();
-            const url = `${process.env.REACT_APP_API}/messages/secure/add/message`;
+            
+            // Lấy email từ Auth0 user object - thử nhiều cách
+            let userEmail = user?.email;
+            if (!userEmail) {
+                userEmail = user?.['https://example.com/email'];
+            }
+            if (!userEmail) {
+                userEmail = user?.sub;
+            }
+            
+            console.log("=== DEBUG POST MESSAGE ===");
+            console.log("User object:", user);
+            console.log("User email:", userEmail);
+            console.log("========================");
 
-            const messageRequestModel: MessageModel = new MessageModel(title, question);
+            const url = `${process.env.REACT_APP_API}/messages/secure/add/message`;
+            // Gửi userEmail trong request body
+            const messageRequestModel = {
+                title: title,
+                question: question,
+                userEmail: userEmail
+            };
 
             const requestOptions = {
                 method: "POST",

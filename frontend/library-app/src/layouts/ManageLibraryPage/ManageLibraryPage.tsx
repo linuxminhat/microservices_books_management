@@ -8,7 +8,6 @@ import { ChangeQuantityOfBooks } from "./components/ChangeQuantityOfBooks";
 
 export const ManageLibraryPage = () => {
   const { isAuthenticated, isLoading, loginWithRedirect, getIdTokenClaims } = useAuth0();
-
   const [changeQuantityOfBooksClick, setChangeQuantityOfBooksClick] = useState(false);
   const [messagesClick, setMessagesClick] = useState(false);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
@@ -36,16 +35,16 @@ export const ManageLibraryPage = () => {
         return;
       }
       const claims = await getIdTokenClaims();
-  
+
       const userType =
         (claims && (claims as any)["userType"]) ||
         (claims && (claims as any)["https://your-namespace.com/userType"]) ||
         null;
-  
+
       const roles: string[] =
         ((claims as any)?.["https://example.com/roles"] as string[]) ||
         ((claims as any)?.["roles"] as string[]) || [];
-  
+
       setIsAdmin(userType === "admin" || roles?.includes("admin"));
     };
     checkRole();

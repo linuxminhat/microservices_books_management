@@ -14,24 +14,19 @@ export const AdminMessages = () => {
         isLoading: authLoading,
     } = useAuth0();
 
-    // Loading states
     const [isLoadingMessages, setIsLoadingMessages] = useState(true);
     const [httpError, setHttpError] = useState<string | null>(null);
-
-    // Message data
     const [messages, setMessages] = useState<MessageModel[]>([]);
     const [messagesPerPage] = useState(5);
-
-    // Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
-
-    // Re-fetch trigger after admin response
     const [btnSubmit, setBtnSubmit] = useState(false);
+    const [submitSuccess, setSubmitSuccess] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
 
-    // === Fetch messages from API ===
+    // === Fetch ALL pending messages from API ===
     useEffect(() => {
-        const fetchUserMessages = async () => {
+        const fetchAllPendingMessages = async () => {
             try {
                 // Redirect to login if not authenticated
                 if (!isAuthenticated) {
@@ -40,7 +35,12 @@ export const AdminMessages = () => {
                 }
 
                 const token = await getAccessTokenSilently();
+                // Gọi API để lấy TẤT CẢ messages chưa được trả lời
                 const url = `${process.env.REACT_APP_API}/messages/search/findByClosed?closed=false&page=${currentPage - 1}&size=${messagesPerPage}`;
+
+                console.log("=== DEBUG ADMIN MESSAGES ===");
+                console.log("Fetching URL:", url);
+                console.log("===========================");
 
                 const response = await fetch(url, {
                     method: "GET",
@@ -55,16 +55,31 @@ export const AdminMessages = () => {
                 }
 
                 const data = await response.json();
-                setMessages(data._embedded.messages);
-                setTotalPages(data.page.totalPages);
+                console.log("Admin messages data:", data);
+
+                // Debug messages
+                if (data._embedded && data._embedded.messages) {
+                    console.log("=== DEBUG MESSAGES ===");
+                    data._embedded.messages.forEach((msg: any, index: number) => {
+                        console.log(`Message ${index}:`, msg);
+                    });
+                    console.log("====================");
+
+                    setMessages(data._embedded.messages);
+                    setTotalPages(data.page.totalPages);
+                } else {
+                    setMessages([]);
+                    setTotalPages(0);
+                }
             } catch (error: any) {
+                console.error("Error fetching admin messages:", error);
                 setHttpError(error.message);
             } finally {
                 setIsLoadingMessages(false);
             }
         };
 
-        fetchUserMessages();
+        fetchAllPendingMessages();
         window.scrollTo(0, 0);
     }, [isAuthenticated, getAccessTokenSilently, currentPage, btnSubmit]);
 
@@ -91,6 +106,10 @@ export const AdminMessages = () => {
 
             const token = await getAccessTokenSilently();
             const url = `${process.env.REACT_APP_API}/messages/secure/admin/message`;
+            console.log("=== DEBUG ADMIN RESPONSE ===");
+            console.log("Message ID:", id);
+            console.log("Response:", response);
+            console.log("===========================");
 
             if (id && response.trim() !== "") {
                 const messageAdminRequestModel = new AdminMessageRequest(id, response);
@@ -105,27 +124,59 @@ export const AdminMessages = () => {
 
                 const responseApi = await fetch(url, requestOptions);
                 if (!responseApi.ok) {
-                    throw new Error("Failed to submit admin response!");
+                    const errorText = await responseApi.text();
+                    console.error("API Error:", responseApi.status, errorText);
+                    throw new Error(`Failed to submit admin response: ${responseApi.status}`);
                 }
+
+                // Hiển thị thông báo thành công
+                setSubmitSuccess(true);
+                setSubmitError(null);
 
                 // Toggle to re-fetch updated messages
                 setBtnSubmit(!btnSubmit);
+
+                // Ẩn thông báo sau 3 giây
+                setTimeout(() => {
+                    setSubmitSuccess(false);
+                }, 3000);
             }
         } catch (error: any) {
-            console.error(error);
-            setHttpError(error.message);
+            console.error("Error submitting admin response:", error);
+            setSubmitError(error.message);
+            setSubmitSuccess(false);
+
+            // Ẩn thông báo lỗi sau 5 giây
+            setTimeout(() => {
+                setSubmitError(null);
+            }, 5000);
         }
     }
 
     // === Pagination handler ===
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-    // === Render UI ===
+    // === Render UI - Hiển thị TẤT CẢ Q&A chưa được trả lời ===
     return (
         <div className="mt-3">
+            {/* Thêm thông báo feedback */}
+            {submitSuccess && (
+                <div className="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>Success!</strong> Response submitted successfully.
+                    <button type="button" className="btn-close" onClick={() => setSubmitSuccess(false)}></button>
+                </div>
+            )}
+
+            {submitError && (
+                <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error!</strong> {submitError}
+                    <button type="button" className="btn-close" onClick={() => setSubmitError(null)}></button>
+                </div>
+            )}
+
             {messages.length > 0 ? (
                 <>
-                    <h5>Pending Q/A:</h5>
+                    <h5>All Pending Q/A Messages ({messages.length}):</h5>
                     {messages.map((message) => (
                         <AdminMessage
                             message={message}
@@ -135,7 +186,7 @@ export const AdminMessages = () => {
                     ))}
                 </>
             ) : (
-                <h5>No pending Q/A</h5>
+                <h5>No pending Q/A messages</h5>
             )}
             {totalPages > 1 && (
                 <Pagination

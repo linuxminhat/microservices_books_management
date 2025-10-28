@@ -21,9 +21,17 @@ public class MessagesService {
     }
 
     public void postMessage(Message messageRequest, String userEmail) {
-        Message message = new Message(messageRequest.getTitle(), messageRequest.getQuestion());
-        message.setUserEmail(userEmail);
+        System.out.println("=== DEBUG MESSAGE SAVE ===");
+        System.out.println("userEmail: " + userEmail);
+        System.out.println("title: " + messageRequest.getTitle());
+        System.out.println("question: " + messageRequest.getQuestion());
+        System.out.println("========================");
+        
+        // Sử dụng constructor mới với userEmail
+        Message message = new Message(messageRequest.getTitle(), messageRequest.getQuestion(), userEmail);
         messageRepository.save(message);
+        
+        System.out.println("Message saved with ID: " + message.getId());
     }
 
     public void putMessage(AdminQuestionRequest adminQuestionRequest, String userEmail) throws Exception {
@@ -37,5 +45,4 @@ public class MessagesService {
         message.get().setClosed(true);
         messageRepository.save(message.get());
     }
-
 }

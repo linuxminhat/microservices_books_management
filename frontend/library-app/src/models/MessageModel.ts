@@ -6,6 +6,11 @@ class MessageModel {
     adminEmail?: string;
     response?: string;
     closed?: boolean;
+    _links?: {
+        self?: {
+            href?: string;
+        };
+    };
 
     constructor(title: string, question: string) {
         this.title = title;

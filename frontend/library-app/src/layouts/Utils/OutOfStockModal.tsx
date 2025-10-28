@@ -28,10 +28,10 @@ export const OutOfStockModal: React.FC<OutOfStockModalProps> = ({ show, onClose,
                         <div className="text-center">
                             <i className="fas fa-book fa-3x text-muted mb-3"></i>
                             <h6 className="mb-3">
-                                Rất tiếc! Cuốn sách <strong>"{bookTitle}"</strong> hiện tại đã hết sẵn có.
+                                Sorry ! Book <strong>"{bookTitle}"</strong> is out of stock now !!!
                             </h6>
                             <p className="text-muted">
-                                Vui lòng chọn cuốn sách khác hoặc quay lại sau để kiểm tra lại.
+                                Choose another book !
                             </p>
                         </div>
                     </div>
@@ -41,7 +41,7 @@ export const OutOfStockModal: React.FC<OutOfStockModalProps> = ({ show, onClose,
                             className="btn btn-secondary"
                             onClick={onClose}
                         >
-                            Đóng
+                            Close
                         </button>
                         <button
                             type="button"
@@ -51,7 +51,7 @@ export const OutOfStockModal: React.FC<OutOfStockModalProps> = ({ show, onClose,
                                 window.location.href = '/search';
                             }}
                         >
-                            Tìm sách khác
+                            Find another book
                         </button>
                     </div>
                 </div>

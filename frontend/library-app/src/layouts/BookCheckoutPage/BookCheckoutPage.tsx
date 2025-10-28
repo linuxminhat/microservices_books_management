@@ -48,7 +48,6 @@ export const BookCheckoutPage = () => {
                 const baseUrl = `${API_CONFIG.BOOK_SERVICE}/books/${bookId}`;
                 const response = await fetch(baseUrl);
                 if (!response.ok) throw new Error("Something went wrong!");
-
                 const data = await response.json();
                 const loadedBook: BookModel = {
                     id: data.id,
@@ -147,15 +146,12 @@ export const BookCheckoutPage = () => {
 
             fetchBookReviews();
         };
-
-        // Thêm event listener
         window.addEventListener('refreshReviews', handleRefreshReviews);
 
         return () => {
             window.removeEventListener('refreshReviews', handleRefreshReviews);
         };
     }, [bookId]);
-    //fetch UserReview 
     useEffect(() => {
         const fetchUserReviewBook = async () => {
             try {
@@ -325,7 +321,7 @@ export const BookCheckoutPage = () => {
             <div className="container d-none d-lg-block">
                 {displayError && (
                     <div className="alert alert-danger mt-3" role="alert">
-                        Please pay outstanding fees and/or return late book(s).
+                        Please return late book(s).
                     </div>
                 )}
                 <div className="row mt-5">
@@ -367,7 +363,7 @@ export const BookCheckoutPage = () => {
             <div className="container d-lg-none mt-5">
                 {displayError && (
                     <div className="alert alert-danger mt-3" role="alert">
-                        Please pay outstanding fees and/or return late book(s).
+                        Please return late book(s).
                     </div>
                 )}
                 <div className="d-flex justify-content-center alighn-items-center">

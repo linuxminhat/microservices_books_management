@@ -15,6 +15,7 @@ export const ReviewListPage = () => {
     const [totalAmountOfReviews, setTotalAmountOfReviews] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
 
+    //get bookId 
     const bookId = (window.location.pathname).split('/')[2];
 
     useEffect(() => {
@@ -30,7 +31,6 @@ export const ReviewListPage = () => {
 
             const responseJsonReviews = await responseReviews.json();
             const responseData = responseJsonReviews._embedded.reviews;
-
             setTotalAmountOfReviews(responseJsonReviews.page.totalElements);
             setTotalPages(responseJsonReviews.page.totalPages);
 
@@ -72,12 +72,9 @@ export const ReviewListPage = () => {
 
     const indexOfLastReview: number = currentPage * reviewsPerPage;
     const indexOfFirstReview: number = indexOfLastReview - reviewsPerPage;
-
     let lastItem = reviewsPerPage * currentPage <= totalAmountOfReviews ?
         reviewsPerPage * currentPage : totalAmountOfReviews;
-
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
 
     return (
         <div className="container mt-5">

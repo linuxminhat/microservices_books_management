@@ -4,20 +4,20 @@ import { StarsReview } from "./StarsReview";
 import { useAuth0 } from "@auth0/auth0-react";
 import { API_CONFIG } from "../../config/apiConfig";
 
-export const Review: React.FC<{ 
-    review: ReviewModel, 
+export const Review: React.FC<{
+    review: ReviewModel,
     isUserReview?: boolean,
     bookId?: number,
     onReviewUpdate?: () => void
 }> = (props) => {
-    
+
     const { isAuthenticated, getIdTokenClaims, user } = useAuth0();
     const [isEditing, setIsEditing] = useState(false);
     const [editRating, setEditRating] = useState(props.review.rating);
     const [editDescription, setEditDescription] = useState(props.review.reviewDescription || '');
     const [isLoading, setIsLoading] = useState(false);
 
-    // THÊM DEBUG
+
     console.log("Review Debug:", {
         reviewUserEmail: props.review.userEmail,
         currentUserEmail: user?.email,
@@ -53,7 +53,7 @@ export const Review: React.FC<{
 
     const handleSave = async () => {
         if (!props.bookId) return;
-        
+
         console.log("Saving review:", { bookId: props.bookId, rating: editRating, description: editDescription });
         setIsLoading(true);
         try {
@@ -93,7 +93,7 @@ export const Review: React.FC<{
 
     const handleDelete = async () => {
         if (!props.bookId || !confirm("Are you sure you want to delete this review?")) return;
-        
+
         console.log("Deleting review for bookId:", props.bookId);
         setIsLoading(true);
         try {
@@ -128,10 +128,9 @@ export const Review: React.FC<{
     const starValue = (value: number) => {
         setEditRating(value);
     };
-    
+
     return (
         <div className={props.isUserReview ? "user-review-highlight" : ""}>
-            {/* THÊM: Badge "Your Review" cho comment của user */}
             {props.isUserReview && isAuthenticated && (
                 <div className="d-flex align-items-center mb-2">
                     <span className="badge bg-primary me-2">
@@ -144,7 +143,7 @@ export const Review: React.FC<{
                     </span>
                 </div>
             )}
-            
+
             <div className={`col-sm-8 col-md-8 ${props.isUserReview ? 'user-review-content' : ''}`}>
                 <div className="d-flex justify-content-between align-items-center">
                     <h5 className={props.isUserReview ? 'text-primary fw-bold' : ''}>
@@ -157,16 +156,16 @@ export const Review: React.FC<{
                         <div>
                             {!isEditing ? (
                                 <>
-                                    <button 
-                                        className="btn btn-sm btn-outline-primary me-2" 
+                                    <button
+                                        className="btn btn-sm btn-outline-primary me-2"
                                         onClick={handleEdit}
                                         disabled={isLoading}
                                     >
                                         <i className="fas fa-edit me-1"></i>
                                         Edit
                                     </button>
-                                    <button 
-                                        className="btn btn-sm btn-outline-danger" 
+                                    <button
+                                        className="btn btn-sm btn-outline-danger"
                                         onClick={handleDelete}
                                         disabled={isLoading}
                                     >
@@ -176,16 +175,16 @@ export const Review: React.FC<{
                                 </>
                             ) : (
                                 <>
-                                    <button 
-                                        className="btn btn-sm btn-success me-2" 
+                                    <button
+                                        className="btn btn-sm btn-success me-2"
                                         onClick={handleSave}
                                         disabled={isLoading}
                                     >
                                         <i className="fas fa-save me-1"></i>
                                         Save
                                     </button>
-                                    <button 
-                                        className="btn btn-sm btn-secondary" 
+                                    <button
+                                        className="btn btn-sm btn-secondary"
                                         onClick={handleCancel}
                                         disabled={isLoading}
                                     >
@@ -230,8 +229,8 @@ export const Review: React.FC<{
                     {!isEditing ? (
                         <p className={props.isUserReview ? 'fw-medium' : ''}>{props.review.reviewDescription}</p>
                     ) : (
-                        <textarea 
-                            className="form-control" 
+                        <textarea
+                            className="form-control"
                             value={editDescription}
                             onChange={(e) => setEditDescription(e.target.value)}
                             rows={3}
@@ -240,7 +239,7 @@ export const Review: React.FC<{
                     )}
                 </div>
             </div>
-            <hr/>
+            <hr />
         </div>
     );
 }

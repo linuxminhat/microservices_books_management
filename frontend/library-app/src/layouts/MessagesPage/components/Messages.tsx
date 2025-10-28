@@ -29,9 +29,28 @@ export const Messages = () => {
                 }
 
                 const token = await getAccessTokenSilently();
-                const userEmail = user?.email || user?.sub;
+                
+                // Lấy email từ Auth0 user object - thử nhiều cách
+                let userEmail = user?.email;
+                if (!userEmail) {
+                    userEmail = user?.['https://example.com/email'];
+                }
+                if (!userEmail) {
+                    userEmail = user?.sub;
+                }
+                
+                console.log("=== DEBUG USER MESSAGES ===");
+                console.log("User object:", user);
+                console.log("User email:", userEmail);
+                console.log("==========================");
 
-                const url = `${process.env.REACT_APP_API}/messages/search/findByUserEmail?user_email=${userEmail}&page=${currentPage - 1}&size=${messagesPerPage}`;
+                if (!userEmail) {
+                    throw new Error("Cannot get user email from Auth0");
+                }
+
+                // Gọi API để lấy messages của user hiện tại
+// Thay đổi URL từ API Gateway sang message-service trực tiếp (dòng 54)
+const url = `${process.env.REACT_APP_API}/messages/search/findByUserEmail?user_email=${encodeURIComponent(userEmail)}&page=${currentPage - 1}&size=${messagesPerPage}`;                console.log("Fetching URL:", url);
 
                 const response = await fetch(url, {
                     method: "GET",
@@ -42,14 +61,24 @@ export const Messages = () => {
                 });
 
                 if (!response.ok) {
-                    throw new Error("Something went wrong while fetching messages!");
+                    const errorText = await response.text();
+                    console.error("API Error:", response.status, errorText);
+                    throw new Error(`API Error: ${response.status} - ${errorText}`);
                 }
 
                 const data = await response.json();
-                setMessages(data._embedded.messages);
-                setTotalPages(data.page.totalPages);
+                console.log("Messages data:", data);
+                
+                // Kiểm tra cấu trúc response
+                if (data._embedded && data._embedded.messages) {
+                    setMessages(data._embedded.messages);
+                    setTotalPages(data.page.totalPages);
+                } else {
+                    setMessages([]);
+                    setTotalPages(0);
+                }
             } catch (error: any) {
-                console.error(error);
+                console.error("Error fetching user messages:", error);
                 setHttpError(error.message);
             } finally {
                 setIsLoadingMessages(false);
@@ -68,33 +97,33 @@ export const Messages = () => {
     if (httpError) {
         return (
             <div className="container m-5">
-                <p>{httpError}</p>
+                <p>Error: {httpError}</p>
             </div>
         );
     }
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-    // ✅ UI
+    // ✅ UI - Chỉ hiển thị Q&A của user hiện tại
     return (
         <div className="mt-2">
             {messages.length > 0 ? (
                 <>
-                    <h5>Current Q/A:</h5>
+                    <h5>Your Q/A Messages ({messages.length}):</h5>
                     {messages.map((message) => (
                         <div key={message.id}>
                             <div className="card mt-2 shadow p-3 bg-body rounded">
                                 <h5>
                                     Case #{message.id}: {message.title}
                                 </h5>
-                                <h6>{message.userEmail}</h6>
-                                <p>{message.question}</p>
+                                <h6>From: {message.userEmail}</h6>
+                                <p><strong>Question:</strong> {message.question}</p>
                                 <hr />
                                 <div>
                                     <h5>Response:</h5>
                                     {message.response && message.adminEmail ? (
                                         <>
-                                            <h6>{message.adminEmail} (admin)</h6>
+                                            <h6>Admin: {message.adminEmail}</h6>
                                             <p>{message.response}</p>
                                         </>
                                     ) : (
@@ -110,7 +139,7 @@ export const Messages = () => {
                     ))}
                 </>
             ) : (
-                <h5>All questions you submit will be shown here</h5>
+                <h5>No questions submitted yet. Submit a question to see it here.</h5>
             )}
 
             {totalPages > 1 && (
