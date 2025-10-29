@@ -1,18 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { useUser, useAuth } from '@/lib/localAuth';
 import { usePathname, useRouter } from 'next/navigation';
 import { SpinnerLoading } from './Utils/SpinnerLoading';
 import { useEffect, useState } from 'react';
 
 export const Navbar = () => {
-    const { user, error, isLoading } = useUser();
+    const { user, isLoading } = useUser();
+    const { logout } = useAuth();
     const pathname = usePathname();
     const router = useRouter();
 
     const handleLogout = async () => {
-        await fetch('/api/auth/logout');
+        await fetch('/api/auth/local/logout', { method: 'POST' });
+        await logout();
         router.push('/');
     };
 
@@ -20,9 +22,7 @@ export const Navbar = () => {
         return <SpinnerLoading />;
     }
 
-    const isAdmin = user?.["userType"] === "admin" ||
-        user?.["https://your-namespace.com/userType"] === "admin" ||
-        ((user?.["https://example.com/roles"] as string[])?.includes?.("admin") ?? false);
+    const isAdmin = Array.isArray(user?.roles) && user?.roles.includes('ADMIN');
 
     const isActive = (path: string) => pathname === path ? 'active' : '';
 
@@ -76,7 +76,7 @@ export const Navbar = () => {
                     <ul className='navbar-nav ms-auto'>
                         {!user ? (
                             <li className='nav-item m-1'>
-                                <a className='btn btn-outline-light' href='/api/auth/login'>
+                                <a className='btn btn-outline-light' href='/login'>
                                     Sign in
                                 </a>
                             </li>

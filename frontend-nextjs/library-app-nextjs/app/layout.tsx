@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { UserProvider } from "@auth0/nextjs-auth0/client";
+import { AuthProvider } from "@/lib/localAuth";
 import BootstrapClient from "../components/BootstrapClient";
 import "./globals.css";
 
@@ -20,9 +20,9 @@ export default function RootLayout({
         <script src="https://js.stripe.com/v3" async></script>
       </head>
       <body>
-        <UserProvider>
+        <AuthProvider>
           {children}
-        </UserProvider>
+        </AuthProvider>
         <BootstrapClient />
       </body>
     </html>

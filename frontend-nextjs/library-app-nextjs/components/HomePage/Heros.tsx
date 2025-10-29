@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { useUser } from '@/lib/localAuth';
 import Link from 'next/link';
 
 export const Heros = () => {
@@ -35,7 +35,7 @@ export const Heros = () => {
                                 <a
                                     type="button"
                                     className="btn main-color btn-lg text-white"
-                                    href="/api/auth/login"
+                                    href="/login"
                                 >
                                     Sign up / Log in
                                 </a>
@@ -88,7 +88,7 @@ export const Heros = () => {
                                 <a
                                     type="button"
                                     className="btn main-color btn-lg text-white"
-                                    href="/api/auth/login"
+                                    href="/login"
                                 >
                                     Sign up / Log in
                                 </a>
