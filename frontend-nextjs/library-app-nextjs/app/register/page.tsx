@@ -28,8 +28,7 @@ export default function RegisterPage() {
       body: JSON.stringify({ email, password })
     });
     if (res.ok) {
-      // auto login using the same cookie set by API, then redirect
-      await login(email, password).catch(() => {});
+      await login(email, password).catch(() => { });
       router.push('/home');
     } else {
       const msg = (await res.json()).message || 'Registration failed';
@@ -40,7 +39,6 @@ export default function RegisterPage() {
   return (
     <Box sx={{ height: '100vh', width: '100vw', overflowX: 'hidden', bgcolor: 'white' }}>
       <Box sx={{ display: 'flex', height: '100%' }}>
-        {/* Left visual pane (like login) */}
         <Box
           sx={{
             flex: 1,
@@ -65,8 +63,6 @@ export default function RegisterPage() {
             </div>
           </Box>
         </Box>
-
-        {/* Right form pane */}
         <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', px: 2 }}>
           <div className="w-full max-w-sm md:max-w-md mx-auto">
             <Button variant="outlined" onClick={() => router.push('/home')} className="mb-4">← Back to Home</Button>

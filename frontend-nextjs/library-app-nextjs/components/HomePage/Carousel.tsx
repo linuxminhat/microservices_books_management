@@ -73,14 +73,12 @@ export const Carousel = () => {
     }
 
     return (
-        <div className='container mt-5' style={{ height: 550 }}>
+        <div className='container mt-5 homepage-carousel-section' style={{ height: 550 }}>
             <div className='homepage-carousel-title'>
-                <h3>Find your next "I stayed up too late reading" book.</h3>
+                <h3 className='homepage-carousel-text'>Find your next "I stayed up too late reading" book.</h3>
             </div>
             <div id='carouselExampleControls' className='carousel carousel-dark slide mt-5 
                 d-none d-lg-block' data-bs-interval='false'>
-
-                {/* Desktop */}
                 <div className='carousel-inner'>
                     <div className='carousel-item active'>
                         <div className='row d-flex justify-content-center align-items-center'>
@@ -115,15 +113,13 @@ export const Carousel = () => {
                     <span className='visually-hidden'>Next</span>
                 </button>
             </div>
-
-            {/* Mobile */}
             <div className='d-lg-none mt-3'>
                 <div className='row d-flex justify-content-center align-items-center'>
                     {books[7] && <ReturnBook book={books[7]} key={books[7].id} />}
                 </div>
             </div>
             <div className='homepage-carousel-title mt-3'>
-                <Link className='btn btn-outline-secondary btn-lg' href='/search'>View More</Link>
+                <Link className='btn btn-outline-light btn-lg' href='/search'>View More</Link>
             </div>
         </div>
     );

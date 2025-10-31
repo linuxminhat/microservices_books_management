@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ReviewModel from "@/models/ReviewModel";
 import { StarsReview } from "./StarsReview";
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { useUser } from "@/lib/localAuth";
 import { API_CONFIG } from "@/config/apiConfig";
 
 export const Review: React.FC<{
@@ -20,7 +20,7 @@ export const Review: React.FC<{
         const res = await fetch('/api/auth/token');
         if (!res.ok) return '';
         const data = await res.json();
-        return data.idToken || '';
+        return (data.accessToken || data.idToken || '');
     };
 
     const date = new Date(props.review.date);

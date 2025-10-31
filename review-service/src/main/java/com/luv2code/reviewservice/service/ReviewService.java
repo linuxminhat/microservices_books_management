@@ -32,9 +32,12 @@ public class ReviewService {
         review.setBookId(reviewRequest.getBookId());
         review.setRating(reviewRequest.getRating());
         review.setUserEmail(userEmail);
-        if (reviewRequest.getReviewDescription().isPresent()) {
-            review.setReviewDescription(reviewRequest.getReviewDescription().map(
-                    Object::toString).orElse(null));
+        if (reviewRequest.getReviewDescription() != null && reviewRequest.getReviewDescription().isPresent()) {
+            review.setReviewDescription(reviewRequest.getReviewDescription()
+                    .map(Object::toString)
+                    .orElse(null));
+        } else {
+            review.setReviewDescription(null);
         }
         review.setDate(Date.valueOf(LocalDate.now()));
         reviewRepository.save(review);
@@ -57,13 +60,15 @@ public class ReviewService {
     public void updateReview(String userEmail, ReviewRequest reviewRequest) throws Exception {
         Review existingReview = reviewRepository.findByUserEmailAndBookId(userEmail, reviewRequest.getBookId());
         if (existingReview == null) {
-            throw new Exception("Review not found");
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_FOUND, "Review not found");
         }
 
         existingReview.setRating(reviewRequest.getRating());
-        if (reviewRequest.getReviewDescription().isPresent()) {
-            existingReview.setReviewDescription(reviewRequest.getReviewDescription().map(
-                    Object::toString).orElse(null));
+        if (reviewRequest.getReviewDescription() != null && reviewRequest.getReviewDescription().isPresent()) {
+            existingReview.setReviewDescription(reviewRequest.getReviewDescription()
+                    .map(Object::toString)
+                    .orElse(null));
         }
         existingReview.setDate(Date.valueOf(LocalDate.now())); 
         reviewRepository.save(existingReview);
@@ -72,7 +77,8 @@ public class ReviewService {
     public void deleteReview(String userEmail, Long bookId) throws Exception {
         Review existingReview = reviewRepository.findByUserEmailAndBookId(userEmail, bookId);
         if (existingReview == null) {
-            throw new Exception("Review not found");
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.NOT_FOUND, "Review not found");
         }
         reviewRepository.delete(existingReview);
     }

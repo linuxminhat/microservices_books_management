@@ -14,6 +14,7 @@ export const SearchBook: React.FC<{ book: BookModel }> = (props) => {
                                 width='123'
                                 height='196'
                                 alt='Book'
+                                onError={(e) => { const t = e.currentTarget; if (!t.src.includes('/Images/BookImages/book-luv2code-1000.png')) t.src = '/Images/BookImages/book-luv2code-1000.png'; }}
                             />
                             :
                             <img src="/Images/BookImages/book-luv2code-1000.png"
@@ -30,6 +31,7 @@ export const SearchBook: React.FC<{ book: BookModel }> = (props) => {
                                 width='123'
                                 height='196'
                                 alt='Book'
+                                onError={(e) => { const t = e.currentTarget; if (!t.src.includes('/Images/BookImages/book-luv2code-1000.png')) t.src = '/Images/BookImages/book-luv2code-1000.png'; }}
                             />
                             :
                             <img src="/Images/BookImages/book-luv2code-1000.png"

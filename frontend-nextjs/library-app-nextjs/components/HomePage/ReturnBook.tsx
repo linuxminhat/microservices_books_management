@@ -14,6 +14,11 @@ export const ReturnBook: React.FC<{ book: BookModel }> = (props) => {
                         width='151'
                         height='233'
                         alt="book"
+                        onError={(e) => {
+                            const target = e.currentTarget;
+                            if (target.src.includes('/Images/BookImages/book-luv2code-1000.png')) return;
+                            target.src = '/Images/BookImages/book-luv2code-1000.png';
+                        }}
                     />
                     :
                     <img

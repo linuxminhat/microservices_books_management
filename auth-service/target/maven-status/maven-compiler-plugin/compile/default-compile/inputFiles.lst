@@ -1,5 +1,6 @@
 D:\fullstackproject\auth-service\src\main\java\com\luv2code\authservice\AuthApplication.java
 D:\fullstackproject\auth-service\src\main\java\com\luv2code\authservice\config\SecurityConfig.java
+D:\fullstackproject\auth-service\src\main\java\com\luv2code\authservice\controller\AdminUserController.java
 D:\fullstackproject\auth-service\src\main\java\com\luv2code\authservice\controller\AuthController.java
 D:\fullstackproject\auth-service\src\main\java\com\luv2code\authservice\DataInitializer.java
 D:\fullstackproject\auth-service\src\main\java\com\luv2code\authservice\model\AuthResponse.java

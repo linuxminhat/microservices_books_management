@@ -1,81 +1,53 @@
 package com.luv2code.adminservice.controller;
 
-import com.luv2code.adminservice.requestmodels.AddBookRequest;
-import com.luv2code.adminservice.service.AdminService;
-import com.luv2code.adminservice.utils.ExtractJWT;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import com.luv2code.adminservice.client.AuthUserClient;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.Map;
 
 @CrossOrigin("http://localhost:3000")
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/admin/users")
+@RequiredArgsConstructor
 public class AdminController {
 
-    private final AdminService adminService;
+    private final AuthUserClient authUserClient;
 
-    @Autowired
-    public AdminController(AdminService adminService) {
-        this.adminService = adminService;
+    @GetMapping
+    public List<Map<String, Object>> list(@RequestHeader("Authorization") String authorization) {
+        return authUserClient.list();
     }
 
-    private boolean isAdmin(String authHeader) {
-        try {
-            String email = ExtractJWT.payloadJWTExtraction(authHeader, "\"email\"");
-            return "admin@cfc.com".equalsIgnoreCase(email);
-        } catch (Exception e) {
-            return false;
-        }
+    @GetMapping("/{id}")
+    public Map<String, Object> get(@RequestHeader("Authorization") String authorization,
+            @PathVariable Long id) {
+        return authUserClient.get(id);
     }
 
-    @PutMapping("/secure/increase/book/quantity")
-    public void increase(@RequestHeader("Authorization") String token, @RequestParam Long bookId) {
-        if (!isAdmin(token))
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Administration page only");
-        try {
-            adminService.increaseBookQuantity(bookId);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@RequestHeader("Authorization") String authorization,
+            @PathVariable Long id, @RequestBody Map<String, Object> body) {
+        return authUserClient.update(id, body);
     }
 
-    @PutMapping("/secure/decrease/book/quantity")
-    public void decrease(@RequestHeader("Authorization") String token, @RequestParam Long bookId) {
-        if (!isAdmin(token))
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Administration page only");
-        try {
-            adminService.decreaseBookQuantity(bookId);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
-        }
+    @PatchMapping("/{id}/lock")
+    public ResponseEntity<Void> lock(@RequestHeader("Authorization") String authorization,
+            @PathVariable Long id, @RequestBody Map<String, Object> body) {
+        return authUserClient.lock(id, body);
     }
 
-    @PostMapping("/secure/add/book")
-    public ResponseEntity<String> add(@RequestHeader("Authorization") String token,
-            @RequestBody AddBookRequest req) {
-        if (!isAdmin(token))
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Administration page only");
-        try {
-            adminService.postBook(req);
-            return ResponseEntity.ok("Book added successfully");
-        } catch (Exception e) {
-            System.err.println("Error adding book: " + e.getMessage());
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Failed to add book: " + e.getMessage(), e);
-        }
+    @PatchMapping("/{id}/role")
+    public ResponseEntity<Void> role(@RequestHeader("Authorization") String authorization,
+            @PathVariable Long id, @RequestBody Map<String, String> body) {
+        return authUserClient.role(id, body);
     }
 
-    @DeleteMapping("/secure/delete/book")
-    public void delete(@RequestHeader("Authorization") String token, @RequestParam Long bookId) {
-        if (!isAdmin(token))
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Administration page only");
-        try {
-            adminService.deleteBook(bookId);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
-        }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@RequestHeader("Authorization") String authorization,
+            @PathVariable Long id) {
+        return authUserClient.delete(id);
     }
 }

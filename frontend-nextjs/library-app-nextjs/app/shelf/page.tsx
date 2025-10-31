@@ -3,7 +3,7 @@
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { useState } from 'react';
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { useUser } from '@/lib/localAuth';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 

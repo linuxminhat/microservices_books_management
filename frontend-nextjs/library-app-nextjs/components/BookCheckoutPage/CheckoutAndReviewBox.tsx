@@ -10,17 +10,16 @@ export const CheckoutAndReviewBox: React.FC<{
 
     function buttonRender() {
         if (props.isAuthenticated) {
-            if (!props.isCheckedOut && props.currentLoansCount < 5) {
-                if (props.book && props.book.copiesAvailable && props.book.copiesAvailable > 0) {
-                    return (<button onClick={() => props.checkoutBook()} className='btn btn-success btn-lg'>Checkout</button>)
-                } else {
-                    return (<button disabled className='btn btn-secondary btn-lg'>Out of Stock</button>)
-                }
-            } else if (props.isCheckedOut) {
-                return (<p><b>Book checked out. Enjoy!</b></p>)
-            } else if (!props.isCheckedOut) {
+            if (props.isCheckedOut) {
+                return (<p className="text-success"><b>Book checked out. Enjoy!</b></p>)
+            }
+            if (props.currentLoansCount >= 5) {
                 return (<p className='text-danger'>Too many books checked out.</p>)
             }
+            if (props.book && props.book.copiesAvailable && props.book.copiesAvailable > 0) {
+                return (<button onClick={() => props.checkoutBook()} className='btn btn-success btn-lg'>Checkout</button>)
+            }
+            return (<button disabled className='btn btn-secondary btn-lg'>Out of Stock</button>)
         }
         return (<Link href={'/api/auth/login'} className='btn btn-success btn-lg'>Sign in</Link>)
     }

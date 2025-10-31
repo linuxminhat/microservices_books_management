@@ -22,7 +22,8 @@ export default function LoansModal(props: { shelfCurrentLoan: ShelfCurrentLoans,
                                         <div className='col-2'>
                                             {props.shelfCurrentLoan.book?.img ?
                                                 <img src={props.shelfCurrentLoan.book?.img} 
-                                                    width='56' height='87' alt='Book'/>
+                                                    width='56' height='87' alt='Book'
+                                                    onError={(e) => { const t = e.currentTarget; if (!t.src.includes('/Images/BookImages/book-luv2code-1000.png')) t.src = '/Images/BookImages/book-luv2code-1000.png'; }} />
                                                 :
                                                 <img src={'/Images/BookImages/book-luv2code-1000.png'} 
                                                     width='56' height='87' alt='Book'/>

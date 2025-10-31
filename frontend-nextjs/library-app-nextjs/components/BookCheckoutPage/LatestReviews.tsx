@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ReviewModel from "@/models/ReviewModel";
 import { Review } from "@/components/Utils/Review";
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { useUser } from "@/lib/localAuth";
 import { useEffect, useState } from "react";
 import { API_CONFIG } from "@/config/apiConfig";
 
@@ -17,7 +17,7 @@ export const LatestReviews: React.FC<{
         const res = await fetch('/api/auth/token');
         if (!res.ok) return '';
         const data = await res.json();
-        return data.idToken || '';
+        return (data.accessToken || data.idToken || '');
     };
 
     useEffect(() => {
@@ -25,6 +25,7 @@ export const LatestReviews: React.FC<{
             if (user && props.bookId) {
                 try {
                     const token = await getIdToken();
+                    if (!token) { setUserReview(null); return; }
                     const url = `${API_CONFIG.REVIEW_SERVICE}/reviews/secure/user/review?bookId=${props.bookId}`;
                     const response = await fetch(url, {
                         method: "GET",
@@ -83,6 +84,7 @@ export const LatestReviews: React.FC<{
         if (user && props.bookId) {
             try {
                 const token = await getIdToken();
+                if (!token) { setUserReview(null); return; }
                 const url = `${API_CONFIG.REVIEW_SERVICE}/reviews/secure/user/review?bookId=${props.bookId}`;
                 const response = await fetch(url, {
                     method: "GET",

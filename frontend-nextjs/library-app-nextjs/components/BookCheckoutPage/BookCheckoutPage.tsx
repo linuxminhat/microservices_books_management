@@ -7,7 +7,7 @@ import { SpinnerLoading } from "@/components/Utils/SpinnerLoading";
 import { StarsReview } from "@/components/Utils/StarsReview";
 import { CheckoutAndReviewBox } from "./CheckoutAndReviewBox";
 import { LatestReviews } from "./LatestReviews";
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { useUser } from "@/lib/localAuth";
 import ReviewRequestModel from "@/models/ReviewRequestModel";
 import { API_CONFIG } from "@/config/apiConfig";
 import { OutOfStockModal } from "@/components/Utils/OutOfStockModal";
@@ -29,20 +29,19 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
     const [isLoadingBookCheckedOut, setIsLoadingBookCheckedOut] = useState(true);
     const [displayError, setDisplayError] = useState(false);
     const [showOutOfStockModal, setShowOutOfStockModal] = useState(false);
+    const [checkedOutLoaded, setCheckedOutLoaded] = useState(false); // mới thêm
 
     const bookId = String(bookIdProp ?? (typeof window !== 'undefined' ? window.location.pathname.split('/')[2] : ''));
 
     const getIdToken = async () => {
-        // In Next.js Auth0 SDK, the ID token is available via the user session endpoint.
-        // For simplicity here, we'll call a backend that accepts the access token sent by route protection.
-        // If you need an ID token, consider exposing an API route to fetch it.
         const res = await fetch('/api/auth/token');
         if (!res.ok) return '';
         const data = await res.json();
-        return data.idToken || '';
+        return (data.accessToken || data.idToken || '');
     };
 
     useEffect(() => {
+        setCheckedOutLoaded(false); // luôn reset loading mỗi lần vào trang/đổi sách
         const fetchBook = async () => {
             try {
                 const baseUrl = `${API_CONFIG.BOOK_SERVICE}/books/${bookId}`;
@@ -118,8 +117,31 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
         const handleRefreshReviews = () => {
             const fetchBookReviews = async () => {
                 try {
-                    const reviewUrl = `${API_CONFIG.REVIEW_SERVICE}/reviews/secure/user/review?bookId=${bookId}`;
-                    await fetch(reviewUrl);
+                    const reviewUrl = `${API_CONFIG.REVIEW_SERVICE}/reviews/search/findByBookId?bookId=${bookId}`;
+                    const response = await fetch(reviewUrl);
+                    if (!response.ok) return;
+                    const data = await response.json();
+                    const reviewsData = data._embedded?.reviews ?? [];
+                    const loadedReviews: ReviewModel[] = [];
+                    let weightedStars = 0;
+                    for (const key in reviewsData) {
+                        loadedReviews.push({
+                            id: reviewsData[key].id,
+                            userEmail: reviewsData[key].userEmail,
+                            date: reviewsData[key].date,
+                            rating: reviewsData[key].rating,
+                            book_id: reviewsData[key].bookId,
+                            reviewDescription: reviewsData[key].reviewDescription,
+                        });
+                        weightedStars += reviewsData[key].rating;
+                    }
+                    if (loadedReviews.length > 0) {
+                        const avg = Math.round((weightedStars / loadedReviews.length) * 2) / 2;
+                        setTotalStars(avg);
+                    } else {
+                        setTotalStars(0);
+                    }
+                    setReviews(loadedReviews);
                 } catch {
                 }
             };
@@ -136,6 +158,7 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
             try {
                 if (user && bookId) {
                     const token = await getIdToken();
+                    if (!token) { setIsReviewLeft(false); return; }
                     const url = `${API_CONFIG.REVIEW_SERVICE}/reviews/secure/user/book?bookId=${bookId}`;
                     const response = await fetch(url, {
                         method: "GET",
@@ -162,6 +185,7 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
             try {
                 if (user) {
                     const token = await getIdToken();
+                    if (!token) { setCurrentLoansCount(0); return; }
                     const url = `${API_CONFIG.BOOK_SERVICE}/books/secure/currentloans/count`;
                     const response = await fetch(url, {
                         method: "GET",
@@ -184,10 +208,17 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
     }, [user, isCheckedOut]);
 
     useEffect(() => {
+        setCheckedOutLoaded(false); // luôn reset loading mỗi lần vào trang/đổi sách
         const fetchUserCheckedOutBook = async () => {
             try {
+                console.log("Bắt đầu fetch isCheckedOut", user, bookId);
                 if (user) {
                     const token = await getIdToken();
+                    if (!token) {
+                        setIsCheckedOut(false);
+                        setCheckedOutLoaded(true);
+                        return;
+                    }
                     const url = `${API_CONFIG.BOOK_SERVICE}/books/secure/ischeckedout/byuser?bookId=${bookId}`;
                     const response = await fetch(url, {
                         method: "GET",
@@ -196,14 +227,25 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
                             "Content-Type": "application/json",
                         },
                     });
-                    if (!response.ok) throw new Error("Something went wrong!");
+                    if (!response.ok) {
+                        setIsCheckedOut(false);
+                        setCheckedOutLoaded(true);
+                        console.log("API không ok", response.status, response.statusText); // Debug
+                        return;
+                    }
                     const data = await response.json();
                     setIsCheckedOut(data);
+                    setCheckedOutLoaded(true);
+                    console.log("Đã fetch xong isCheckedOut:", data);
+                } else {
+                    setIsCheckedOut(false);
+                    setCheckedOutLoaded(true);
+                    console.log("Không có user, reset isCheckedOut false");
                 }
-            } catch (error: any) {
-                setHttpError(error.message);
-            } finally {
-                setIsLoadingBookCheckedOut(false);
+            } catch (e) {
+                setIsCheckedOut(false);
+                setCheckedOutLoaded(true);
+                console.log("Lỗi fetch isCheckedOut:", e);
             }
         };
         fetchUserCheckedOutBook();
@@ -215,7 +257,8 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
         isLoadingCurrentLoansCount ||
         isLoadingBookCheckedOut ||
         isLoadingUserReview ||
-        authLoading
+        authLoading ||
+        !checkedOutLoaded // render đúng sau khi checked xong
     ) {
         return <SpinnerLoading />;
     }
@@ -257,8 +300,14 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
 
     async function submitReview(starInput: number, reviewDescription: string) {
         try {
+
             if (!book?.id) return;
             const token = await getIdToken();
+            if (!token) {
+                setHttpError('Your session has expired. Please log in again to submit a review.');
+                return;
+            }
+
             const reviewRequestModel = new ReviewRequestModel(starInput, book.id, reviewDescription);
             const url = `${API_CONFIG.REVIEW_SERVICE}/reviews/secure`;
             const response = await fetch(url, {
@@ -293,7 +342,8 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
                 <div className="row mt-5">
                     <div className="col-sm-2 col-md-2">
                         {book?.img ? (
-                            <img src={book?.img} width="226" height="349" alt="Book" />
+                            <img src={book?.img} width="226" height="349" alt="Book"
+                                onError={(e) => { const t = e.currentTarget; if (!t.src.includes('/Images/BookImages/book-luv2code-1000.png')) t.src = '/Images/BookImages/book-luv2code-1000.png'; }} />
                         ) : (
                             <img
                                 src={'/Images/BookImages/book-luv2code-1000.png'}
@@ -334,7 +384,8 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
                 )}
                 <div className="d-flex justify-content-center alighn-items-center">
                     {book?.img ? (
-                        <img src={book?.img} width="226" height="349" alt="Book" />
+                        <img src={book?.img} width="226" height="349" alt="Book"
+                            onError={(e) => { const t = e.currentTarget; if (!t.src.includes('/Images/BookImages/book-luv2code-1000.png')) t.src = '/Images/BookImages/book-luv2code-1000.png'; }} />
                     ) : (
                         <img
                             src={'/Images/BookImages/book-luv2code-1000.png'}

@@ -46,11 +46,8 @@ public class BookService {
         book.get().setCopiesAvailable(book.get().getCopiesAvailable() - 1);
         bookRepository.save(book.get());
 
-        Checkout checkout = new Checkout(
-                userEmail,
-                LocalDate.now().toString(),
-                LocalDate.now().plusDays(7).toString(),
-                book.get().getId());
+        Checkout checkout = new Checkout(userEmail, LocalDate.now().toString(),
+                LocalDate.now().plusDays(7).toString(), book.get().getId());
 
         checkoutRepository.save(checkout);
 
@@ -86,8 +83,8 @@ public class BookService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         for (Book book : books) {
-            Optional<Checkout> checkout = checkoutList.stream()
-                    .filter(x -> x.getBookId() == book.getId()).findFirst();
+            Optional<Checkout> checkout =
+                    checkoutList.stream().filter(x -> x.getBookId() == book.getId()).findFirst();
 
             if (checkout.isPresent()) {
 
@@ -96,10 +93,11 @@ public class BookService {
 
                 TimeUnit time = TimeUnit.DAYS;
 
-                long difference_In_Time = time.convert(d1.getTime() - d2.getTime(),
-                        TimeUnit.MILLISECONDS);
+                long difference_In_Time =
+                        time.convert(d1.getTime() - d2.getTime(), TimeUnit.MILLISECONDS);
 
-                shelfCurrentLoansResponses.add(new ShelfCurrentLoansResponse(book, (int) difference_In_Time));
+                shelfCurrentLoansResponses
+                        .add(new ShelfCurrentLoansResponse(book, (int) difference_In_Time));
             }
         }
         return shelfCurrentLoansResponses;
@@ -125,7 +123,8 @@ public class BookService {
         Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
 
         if (validateCheckout == null) {
-            System.err.println("=== CHECKOUT NOT FOUND FOR USER: " + userEmail + ", BOOK: " + bookId + " ===");
+            System.err.println(
+                    "=== CHECKOUT NOT FOUND FOR USER: " + userEmail + ", BOOK: " + bookId + " ===");
             throw new Exception("Book is not checked out by user");
         }
 
@@ -136,14 +135,9 @@ public class BookService {
             bookRepository.save(book.get());
             checkoutRepository.deleteById(validateCheckout.getId());
 
-            History history = new History(
-                    userEmail,
-                    validateCheckout.getCheckoutDate(),
-                    LocalDate.now().toString(),
-                    book.get().getTitle(),
-                    book.get().getAuthor(),
-                    book.get().getDescription(),
-                    book.get().getImg());
+            History history = new History(userEmail, validateCheckout.getCheckoutDate(),
+                    LocalDate.now().toString(), book.get().getTitle(), book.get().getAuthor(),
+                    book.get().getDescription(), book.get().getImg());
 
             System.out.println("=== SAVING HISTORY WITH IMAGE LENGTH: "
                     + (history.getImg() != null ? history.getImg().length() : "NULL") + " ===");
@@ -181,11 +175,41 @@ public class BookService {
     }
 
     public void saveBook(Book book) {
+        // Nếu là sách mới (id null, hoặc copiesAvailable chưa hợp lệ), sync cho chuẩn:
+        if (book.getId() == null || book.getCopiesAvailable() < 0 || book.getCopiesAvailable() > book.getCopies()) {
+            book.setCopiesAvailable(book.getCopies());
+        }
         bookRepository.save(book);
     }
 
     public void deleteBook(Long bookId) {
         bookRepository.deleteById(bookId);
+    }
+
+    public Book increaseQuantity(Long bookId, int amount) throws Exception {
+        if (amount <= 0)
+            amount = 1;
+        Optional<Book> opt = bookRepository.findById(bookId);
+        if (!opt.isPresent())
+            throw new Exception("Book not found");
+        Book b = opt.get();
+        b.setCopies(b.getCopies() + amount);
+        b.setCopiesAvailable(b.getCopiesAvailable() + amount);
+        return bookRepository.save(b);
+    }
+
+    public Book decreaseQuantity(Long bookId, int amount) throws Exception {
+        if (amount <= 0)
+            amount = 1;
+        Optional<Book> opt = bookRepository.findById(bookId);
+        if (!opt.isPresent())
+            throw new Exception("Book not found");
+        Book b = opt.get();
+        if (b.getCopies() - amount < 0 || b.getCopiesAvailable() - amount < 0)
+            throw new Exception("Quantity cannot be negative");
+        b.setCopies(b.getCopies() - amount);
+        b.setCopiesAvailable(b.getCopiesAvailable() - amount);
+        return bookRepository.save(b);
     }
 
     public List<Book> getAllBooks() {

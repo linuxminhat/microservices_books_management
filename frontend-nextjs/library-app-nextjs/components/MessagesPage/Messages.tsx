@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { useUser } from "@/lib/localAuth";
 import { useEffect, useState } from "react";
 import MessageModel from "@/models/MessageModel";
 import { SpinnerLoading } from "@/components/Utils/SpinnerLoading";

@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { useUser } from "@/lib/localAuth";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import ShelfCurrentLoans from "@/models/ShelfCurrentLoans";
@@ -18,7 +18,7 @@ export default function Loans() {
         const res = await fetch('/api/auth/token');
         if (!res.ok) return '';
         const data = await res.json();
-        return data.idToken || '';
+        return (data.accessToken || data.idToken || '');
     };
 
     useEffect(() => {
@@ -27,6 +27,7 @@ export default function Loans() {
                 setIsLoadingUserLoans(false);
                 return;
             }
+
             try {
                 const token = await getIdToken();
                 const url = `${process.env.NEXT_PUBLIC_BOOK_SERVICE || 'http://localhost:8082/api'}/books/secure/currentloans`;
@@ -85,7 +86,8 @@ export default function Loans() {
                                 <div className="row mt-3 mb-3">
                                     <div className="col-4 col-md-4 container">
                                         {shelfCurrentLoan.book?.img ? (
-                                            <img src={shelfCurrentLoan.book?.img} width="226" height="349" alt="Book" />
+                                            <img src={shelfCurrentLoan.book?.img} width="226" height="349" alt="Book"
+                                                onError={(e) => { const t = e.currentTarget; if (!t.src.includes('/Images/BookImages/book-luv2code-1000.png')) t.src = '/Images/BookImages/book-luv2code-1000.png'; }} />
                                         ) : (
                                             <img src={'/Images/BookImages/book-luv2code-1000.png'} width="226" height="349" alt="Book" />
                                         )}
@@ -131,7 +133,8 @@ export default function Loans() {
                             <div key={shelfCurrentLoan.book.id}>
                                 <div className="d-flex justify-content-center align-items-center">
                                     {shelfCurrentLoan.book?.img ? (
-                                        <img src={shelfCurrentLoan.book?.img} width="226" height="349" alt="Book" />
+                                        <img src={shelfCurrentLoan.book?.img} width="226" height="349" alt="Book"
+                                            onError={(e) => { const t = e.currentTarget; if (!t.src.includes('/Images/BookImages/book-luv2code-1000.png')) t.src = '/Images/BookImages/book-luv2code-1000.png'; }} />
                                     ) : (
                                         <img src={'/Images/BookImages/book-luv2code-1000.png'} width="226" height="349" alt="Book" />
                                     )}

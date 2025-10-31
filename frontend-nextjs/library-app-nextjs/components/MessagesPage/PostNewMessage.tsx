@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { useUser } from "@/lib/localAuth";
 import { useState } from "react";
 
 export default function PostNewMessage() {

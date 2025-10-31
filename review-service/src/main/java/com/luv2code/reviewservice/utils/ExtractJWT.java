@@ -1,39 +1,32 @@
 package com.luv2code.reviewservice.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ExtractJWT {
 
     public static String payloadJWTExtraction(String token, String extraction) {
+        try {
+            if (token == null || token.isBlank()) return null;
+            String field = extraction == null ? null : extraction.replace("\"", "");
+            if (field == null || field.isBlank()) return null;
 
-        token = token.replace("Bearer ", "");
+            String raw = token.startsWith("Bearer ") ? token.substring(7) : token;
+            String[] chunks = raw.split("\\.");
+            if (chunks.length < 2) return null;
 
-        String[] chunks = token.split("\\.");
-        Base64.Decoder decoder = Base64.getUrlDecoder();
+            byte[] decoded = Base64.getUrlDecoder().decode(chunks[1]);
+            String payload = new String(decoded, StandardCharsets.UTF_8);
 
-        String payload = new String(decoder.decode(chunks[1]));
-        String[] entries = payload.split(",");
-        Map<String, String> map = new HashMap<String, String>();
-
-        for (String entry : entries) {
-            String[] keyValue = entry.split(":");
-            if (keyValue[0].equals(extraction)) {
-
-                int remove = 1;
-                if (keyValue[1].endsWith("}")) {
-                    remove = 2;
-                }
-                keyValue[1] = keyValue[1].substring(0, keyValue[1].length() - remove);
-                keyValue[1] = keyValue[1].substring(1);
-
-                map.put(keyValue[0], keyValue[1]);
-            }
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode node = mapper.readTree(payload);
+            JsonNode valueNode = node.get(field);
+            return valueNode == null ? null : valueNode.asText();
+        } catch (Exception e) {
+            return null;
         }
-        if (map.containsKey(extraction)) {
-            return map.get(extraction);
-        }
-        return null;
     }
 }

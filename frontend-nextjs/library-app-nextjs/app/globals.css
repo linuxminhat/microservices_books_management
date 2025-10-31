@@ -17,8 +17,10 @@ body {
 }
 
 .header {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("/Images/PublicImages/image-2.jpg");
-    opacity: var(--mainOpacity);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url("/Images/PublicImages/image-2.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     height: 25em !important;
 }
 
@@ -177,4 +179,28 @@ body {
 .inactiveLink {
     pointer-events: none;
     cursor: default;
+}
+
+/* Home carousel background */
+.homepage-carousel-section {
+    background-image: linear-gradient(rgba(255,255,255,0.0), rgba(255,255,255,0.0)), url("/Images/PublicImages/library-background-image.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 8px;
+    padding: 2rem 0 1rem 0;
+    /* full-bleed background */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    color: #fff;
+}
+
+.homepage-carousel-text {
+    color: #fff !important;
+    font-weight: 700 !important;
+}
+
+.homepage-carousel-section .btn.btn-outline-secondary {
+    border-color: #fff !important;
+    color: #fff !important;
 }

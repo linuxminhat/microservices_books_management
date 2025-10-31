@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { useUser } from "@/lib/localAuth";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import HistoryModel from "@/models/HistoryModel";
@@ -19,7 +19,7 @@ export default function HistoryPage() {
         const res = await fetch('/api/auth/token');
         if (!res.ok) return '';
         const data = await res.json();
-        return data.idToken || '';
+        return (data.accessToken || data.idToken || '');
     };
 
     useEffect(() => {
@@ -30,8 +30,8 @@ export default function HistoryPage() {
             }
             try {
                 const token = await getIdToken();
-                const id = (user as any)?.sub ?? "";
-                const url = `${process.env.NEXT_PUBLIC_MESSAGE_SERVICE || 'http://localhost:8085/api'}/histories/search/findBooksByUserEmail?email=${encodeURIComponent(id)}&page=${currentPage - 1}&size=5`;
+                const email = (user as any)?.email || (user as any)?.['https://example.com/email'] || (user as any)?.sub || '';
+                const url = `${process.env.NEXT_PUBLIC_BOOK_SERVICE || 'http://localhost:8082/api'}/histories/search/findBooksByUserEmail?email=${encodeURIComponent(email)}&page=${currentPage - 1}&size=5`;
                 const requestOptions = { method: "GET", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } } as RequestInit;
                 const historyResponse = await fetch(url, requestOptions);
                 if (!historyResponse.ok) throw new Error("Something went wrong!");
@@ -51,7 +51,6 @@ export default function HistoryPage() {
     if (httpError) return (<div className="container m-5"><p>{httpError}</p></div>);
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
     return (
         <div className="mt-2">
             {histories.length > 0 ? (
@@ -64,14 +63,16 @@ export default function HistoryPage() {
                                     <div className="col-md-2">
                                         <div className="d-none d-lg-block">
                                             {history.img ? (
-                                                <img src={history.img} width="123" height="196" alt="Book" />
+                                                <img src={history.img} width="123" height="196" alt="Book"
+                                                    onError={(e) => { const t = e.currentTarget; if (!t.src.includes('/Images/BookImages/book-luv2code-1000.png')) t.src = '/Images/BookImages/book-luv2code-1000.png'; }} />
                                             ) : (
                                                 <img src={'/Images/BookImages/book-luv2code-1000.png'} width="123" height="196" alt="Default" />
                                             )}
                                         </div>
                                         <div className="d-lg-none d-flex justify-content-center align-items-center">
                                             {history.img ? (
-                                                <img src={history.img} width="123" height="196" alt="Book" />
+                                                <img src={history.img} width="123" height="196" alt="Book"
+                                                    onError={(e) => { const t = e.currentTarget; if (!t.src.includes('/Images/BookImages/book-luv2code-1000.png')) t.src = '/Images/BookImages/book-luv2code-1000.png'; }} />
                                             ) : (
                                                 <img src={'/Images/BookImages/book-luv2code-1000.png'} width="123" height="196" alt="Default" />
                                             )}

@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 const AddNewBook = dynamic(() => import('@/components/ManageLibraryPage/AddNewBook'), { ssr: false });
 const ChangeQuantityOfBooks = dynamic(() => import('@/components/ManageLibraryPage/ChangeQuantityOfBooks'), { ssr: false });
-const AdminMessages = dynamic(() => import('@/components/ManageLibraryPage/AdminMessages'), { ssr: false });
+const AdminMessages = dynamic(() => import('@/components/ManageLibraryPage/AdminMessage'), { ssr: false });
 
 export default function AdminPage() {
     const [changeQuantityOfBooksClick, setChangeQuantityOfBooksClick] = useState(false);
