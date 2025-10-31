@@ -1,10 +1,9 @@
 :root {
     --mainOpacity: rgba(0, 0, 0, 0.55);
-    /* Màu gradient cho navbar - Tươi sáng và hiện đại */
-    --primary-color: #2563eb;
-    --secondary-color: #1e40af;
-    --accent-color: #3b82f6;
-    --hover-color: #60a5fa;
+    --primary-color: #A0522D;
+    --secondary-color: #7A3A20;
+    --accent-color: #C06A3D;
+    --hover-color: #D1876A;
 }
 
 body {
@@ -38,7 +37,6 @@ body {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Logo/Brand */
 .navbar-brand {
     font-size: 1.5rem !important;
     font-weight: 700 !important;
@@ -55,7 +53,6 @@ body {
     color: #fff !important;
 }
 
-/* Logo icon */
 .navbar-brand::before {
     content: "📚";
     font-size: 1.8rem;
@@ -64,6 +61,7 @@ body {
 }
 
 @keyframes float {
+
     0%,
     100% {
         transform: translateY(0px);
@@ -74,7 +72,6 @@ body {
     }
 }
 
-/* Nav Items */
 .navbar-nav .nav-item {
     margin: 0 0.3rem;
 }
@@ -90,14 +87,12 @@ body {
     overflow: hidden;
 }
 
-/* Hover Effect */
 .navbar-nav .nav-link:hover {
     background-color: rgba(255, 255, 255, 0.15);
     color: #fff !important;
     transform: translateY(-2px);
 }
 
-/* Active State - Rõ ràng */
 .navbar-nav .nav-link.active {
     background-color: rgba(255, 255, 255, 0.25);
     color: #fff !important;
@@ -105,7 +100,6 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Active indicator underline */
 .navbar-nav .nav-link.active::after {
     content: '';
     position: absolute;
@@ -118,7 +112,6 @@ body {
     border-radius: 2px;
 }
 
-/* Buttons */
 .btn-outline-light {
     font-weight: 600 !important;
     padding: 0.6rem 1.5rem !important;
@@ -135,7 +128,6 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Mobile Responsive */
 @media (max-width: 991px) {
     .navbar-nav .nav-link {
         text-align: left;
@@ -147,16 +139,26 @@ body {
     }
 }
 
-/* ===== END NAVBAR STYLES ===== */
-
 .col-image-left {
     background-image: url("/Images/PublicImages/image-4.jpg");
     height: 25em !important;
+    filter: none !important;
+    opacity: 1 !important;
+    background-blend-mode: normal !important;
+    background-size: cover; 
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 
 .col-image-right {
     background-image: url("/Images/PublicImages/image-1.jpg");
     height: 25em !important;
+    filter: none !important;
+    opacity: 1 !important;
+    background-blend-mode: normal !important;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 
 .lost-image {
@@ -181,26 +183,60 @@ body {
     cursor: default;
 }
 
-/* Home carousel background */
 .homepage-carousel-section {
-    background-image: linear-gradient(rgba(255,255,255,0.0), rgba(255,255,255,0.0)), url("/Images/PublicImages/library-background-image.jpg");
+    background-image: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url("/Images/PublicImages/library-background-image.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     border-radius: 8px;
     padding: 2rem 0 1rem 0;
-    /* full-bleed background */
     width: 100vw;
     margin-left: calc(50% - 50vw);
-    color: #fff;
+    color: #FAF3E0;
 }
 
 .homepage-carousel-text {
-    color: #fff !important;
+    color: #FAF3E0 !important;
     font-weight: 700 !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 .homepage-carousel-section .btn.btn-outline-secondary {
-    border-color: #fff !important;
-    color: #fff !important;
+    background-color: var(--primary-color) !important;
+    color: #FAF3E0 !important;
+    border-color: transparent !important;
+}
+
+.homepage-carousel-section .btn.btn-outline-secondary:hover {
+    background-color: var(--accent-color) !important;
+    color: #FAF3E0 !important;
+}
+
+.homepage-carousel-section .carousel-control-prev,
+.homepage-carousel-section .carousel-control-next {
+    opacity: 1;
+}
+
+.homepage-carousel-section .carousel-control-prev-icon,
+.homepage-carousel-section .carousel-control-next-icon {
+    width: 3rem;
+    height: 3rem;
+    background-size: 100% 100%;
+    border-radius: 9999px;
+    background-color: #FAF3E0;
+    filter: invert(31%) sepia(18%) saturate(1161%) hue-rotate(338deg) brightness(93%) contrast(92%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease, filter 160ms ease;
+}
+
+.homepage-carousel-section .carousel-control-prev:hover .carousel-control-prev-icon,
+.homepage-carousel-section .carousel-control-next:hover .carousel-control-next-icon {
+    background-color: #FFF6E6;
+    transform: scale(1.06);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.homepage-carousel-section .carousel-control-prev:active .carousel-control-prev-icon,
+.homepage-carousel-section .carousel-control-next:active .carousel-control-next-icon {
+    transform: scale(0.98);
 }

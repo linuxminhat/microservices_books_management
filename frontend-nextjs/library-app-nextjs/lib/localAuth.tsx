@@ -50,32 +50,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const res = await fetch('http://localhost:8081/api/auth/login', {
+    const res = await fetch('/api/auth/local/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
+      credentials: 'include',
     });
     if (res.ok) {
-      const data = await res.json();
-      console.log("DEBUG login BACKEND response:", data);
-      const jwt = data.token;
-      if (jwt) {
-        localStorage.setItem('access_token', jwt);
-        sessionStorage.setItem('access_token', jwt);
-      }
+      const { user: userResp } = await res.json();
+      console.log("DEBUG login BACKEND response:", userResp);
 
-      setUser({
-        email: data.email,
-        name: data.fullName,
-        roles: data.role ? [data.role] : Array.isArray(data.roles) ? data.roles : [],
-        sub: String(data.userId),
-      });
-      sessionStorage.setItem('authUser', JSON.stringify({
-        email: data.email,
-        name: data.fullName,
-        roles: data.role ? [data.role] : Array.isArray(data.roles) ? data.roles : [],
-        sub: String(data.userId),
-      }));
+      // Read token from httpOnly cookie via internal endpoint and persist for FE auth headers
+      try {
+        const tokenRes = await fetch('/api/auth/token', { credentials: 'include' });
+        if (tokenRes.ok) {
+          const tokenData = await tokenRes.json();
+          const jwt = tokenData.accessToken || tokenData.idToken || '';
+          if (jwt) {
+            localStorage.setItem('access_token', jwt);
+            sessionStorage.setItem('access_token', jwt);
+          }
+        }
+      } catch {}
+
+      const userObj = {
+        email: userResp.email,
+        name: userResp.name,
+        roles: Array.isArray(userResp.roles) ? userResp.roles : [],
+        sub: String(userResp.sub || ''),
+      };
+      setUser(userObj);
+      sessionStorage.setItem('authUser', JSON.stringify(userObj));
       return true;
     } else {
       localStorage.removeItem('access_token');

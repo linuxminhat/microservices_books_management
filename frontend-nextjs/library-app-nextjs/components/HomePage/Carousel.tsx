@@ -6,25 +6,18 @@ import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import Link from "next/link";
 import { API_CONFIG } from "../../config/apiConfig";
 import { ReturnBook } from "./ReturnBook";
-
 export const Carousel = () => {
-
     const [books, setBooks] = useState<BookModel[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [httpError, setHttpError] = useState(null);
-
     useEffect(() => {
         const fetchBooks = async () => {
             const baseUrl: string = `${API_CONFIG.BOOK_SERVICE}/books`;
-
             const url: string = `${baseUrl}?page=0&size=9`;
-
             const response = await fetch(url);
-
             if (!response.ok) {
                 throw new Error('Something went wrong!');
             }
-
             const responseJson = await response.json();
             console.log("=== CAROUSEL DEBUG ===");
             console.log("API Response:", responseJson);
@@ -33,9 +26,7 @@ export const Carousel = () => {
             console.log("Has _embedded:", !!responseJson._embedded);
             console.log("=====================");
             const responseData = responseJson.content || responseJson._embedded?.books || responseJson;
-
             const loadedBooks: BookModel[] = [];
-
             for (const key in responseData) {
                 loadedBooks.push({
                     id: responseData[key].id,
@@ -57,13 +48,11 @@ export const Carousel = () => {
             setHttpError(error.message);
         })
     }, []);
-
     if (isLoading) {
         return (
             <SpinnerLoading />
         )
     }
-
     if (httpError) {
         return (
             <div className='container m-5'>
@@ -71,7 +60,6 @@ export const Carousel = () => {
             </div>
         )
     }
-
     return (
         <div className='container mt-5 homepage-carousel-section' style={{ height: 550 }}>
             <div className='homepage-carousel-title'>

@@ -1,5 +1,6 @@
 D:\fullstackproject\book-service\src\main\java\com\luv2code\bookservice\BookServiceApplication.java
 D:\fullstackproject\book-service\src\main\java\com\luv2code\bookservice\config\CorsConfig.java
+D:\fullstackproject\book-service\src\main\java\com\luv2code\bookservice\config\CorsGlobalFilter.java
 D:\fullstackproject\book-service\src\main\java\com\luv2code\bookservice\config\SecurityConfiguration.java
 D:\fullstackproject\book-service\src\main\java\com\luv2code\bookservice\controller\BookController.java
 D:\fullstackproject\book-service\src\main\java\com\luv2code\bookservice\dao\BookRepository.java

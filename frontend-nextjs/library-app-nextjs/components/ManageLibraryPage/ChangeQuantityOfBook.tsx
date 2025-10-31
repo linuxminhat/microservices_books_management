@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BookModel } from "@/models/BookModel";
-// Bạn tự tạo hàm này cho localAuth
-import { getToken } from "@/lib/localAuth"; // sửa đường dẫn phù hợp nếu cần
+import { getToken } from "@/lib/localAuth";
 
 interface Props {
     book: BookModel;

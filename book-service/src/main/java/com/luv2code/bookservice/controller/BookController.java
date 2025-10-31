@@ -15,7 +15,10 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true",
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH,
+                RequestMethod.DELETE, RequestMethod.OPTIONS},
+        maxAge = 3600)
 @RestController
 @RequestMapping("/api/books")
 public class BookController {

@@ -26,10 +26,9 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
     const [currentLoansCount, setCurrentLoansCount] = useState(0);
     const [isLoadingCurrentLoansCount, setIsLoadingCurrentLoansCount] = useState(true);
     const [isCheckedOut, setIsCheckedOut] = useState(false);
-    const [isLoadingBookCheckedOut, setIsLoadingBookCheckedOut] = useState(true);
     const [displayError, setDisplayError] = useState(false);
     const [showOutOfStockModal, setShowOutOfStockModal] = useState(false);
-    const [checkedOutLoaded, setCheckedOutLoaded] = useState(false); // mới thêm
+    const [checkedOutLoaded, setCheckedOutLoaded] = useState(false);
 
     const bookId = String(bookIdProp ?? (typeof window !== 'undefined' ? window.location.pathname.split('/')[2] : ''));
 
@@ -41,7 +40,6 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
     };
 
     useEffect(() => {
-        setCheckedOutLoaded(false); // luôn reset loading mỗi lần vào trang/đổi sách
         const fetchBook = async () => {
             try {
                 const baseUrl = `${API_CONFIG.BOOK_SERVICE}/books/${bookId}`;
@@ -208,7 +206,7 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
     }, [user, isCheckedOut]);
 
     useEffect(() => {
-        setCheckedOutLoaded(false); // luôn reset loading mỗi lần vào trang/đổi sách
+        setCheckedOutLoaded(false);
         const fetchUserCheckedOutBook = async () => {
             try {
                 console.log("Bắt đầu fetch isCheckedOut", user, bookId);
@@ -230,7 +228,7 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
                     if (!response.ok) {
                         setIsCheckedOut(false);
                         setCheckedOutLoaded(true);
-                        console.log("API không ok", response.status, response.statusText); // Debug
+                        console.log("API không ok", response.status, response.statusText);
                         return;
                     }
                     const data = await response.json();
@@ -255,10 +253,9 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
         isLoading ||
         isLoadingReview ||
         isLoadingCurrentLoansCount ||
-        isLoadingBookCheckedOut ||
         isLoadingUserReview ||
         authLoading ||
-        !checkedOutLoaded // render đúng sau khi checked xong
+        !checkedOutLoaded
     ) {
         return <SpinnerLoading />;
     }
@@ -270,7 +267,6 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
             </div>
         );
     }
-
     async function checkoutBook() {
         try {
             const token = await getIdToken();
@@ -293,6 +289,7 @@ export default function BookCheckoutPage({ bookId: bookIdProp }: { bookId?: stri
             }
             setDisplayError(false);
             setIsCheckedOut(true);
+            setCheckedOutLoaded(true);
         } catch (error: any) {
             if (!showOutOfStockModal) setHttpError(error.message);
         }

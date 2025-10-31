@@ -8,10 +8,10 @@ import { LibraryServices } from "./LibraryServices";
 export const HomePage = () => {
     return (
         <>
-            <ExploreTopBooks/>
-            <Carousel/>
-            <Heros/>
-            <LibraryServices/>
+            <ExploreTopBooks />
+            <Carousel />
+            <Heros />
+            <LibraryServices />
         </>
     );
 }
