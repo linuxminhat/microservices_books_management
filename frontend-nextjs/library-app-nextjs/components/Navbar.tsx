@@ -64,11 +64,18 @@ export const Navbar = () => {
                                     </Link>
                                 </li>
                                 {isAdmin && (
-                                    <li className='nav-item'>
-                                        <Link className={`nav-link ${isActive('/admin')}`} href='/admin'>
-                                            Admin
-                                        </Link>
-                                    </li>
+                                    <>
+                                        <li className='nav-item'>
+                                            <Link className={`nav-link ${isActive('/admin')}`} href='/admin'>
+                                                Admin
+                                            </Link>
+                                        </li>
+                                        <li className='nav-item'>
+                                            <Link className={`nav-link ${isActive('/management')}`} href='/management'>
+                                                Management
+                                            </Link>
+                                        </li>
+                                    </>
                                 )}
                             </>
                         )}
