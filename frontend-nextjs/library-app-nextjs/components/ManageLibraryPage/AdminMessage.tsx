@@ -25,8 +25,6 @@ export default function AdminMessages() {
             try {
                 setIsLoadingMessages(true);
                 setHttpError(null);
-
-                // Must have admin user (tuỳ role bạn kiểm tra thêm nếu cần)
                 if (!user) {
                     setIsLoadingMessages(false);
                     setHttpError("You must be signed in as admin to access this page.");
@@ -36,10 +34,6 @@ export default function AdminMessages() {
                 const token = await getAccessToken?.();
                 const base = process.env.NEXT_PUBLIC_MESSAGE_SERVICE || 'http://localhost:8085/api';
                 const url = `${base}/messages/search/findByClosed?closed=false&page=${currentPage - 1}&size=${messagesPerPage}`;
-
-                // Debug log
-                // console.log('API URL:', url, 'TOKEN:', token);
-
                 const response = await fetch(url, {
                     method: "GET",
                     headers: {
@@ -49,7 +43,6 @@ export default function AdminMessages() {
                 });
 
                 if (!response.ok) {
-                    // Show response status & error string
                     const errText = await response.text();
                     throw new Error(`API Error: ${response.status} - ${errText}`);
                 }
@@ -72,8 +65,6 @@ export default function AdminMessages() {
         fetchAllPendingMessages();
         if (typeof window !== 'undefined') window.scrollTo(0, 0);
     }, [user, currentPage, btnSubmit, getAccessToken]);
-
-    // Loading and error UI
     if (isLoadingMessages) return <SpinnerLoading />;
     if (httpError)
         return (
@@ -81,8 +72,6 @@ export default function AdminMessages() {
                 <div className="alert alert-danger">{httpError}</div>
             </div>
         );
-
-    // Xử lý submit trả lời
     async function submitResponseToQuestion(id: number, response: string) {
         try {
             if (!user) {

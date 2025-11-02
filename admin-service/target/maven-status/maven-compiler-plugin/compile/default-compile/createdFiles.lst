@@ -1,4 +1,6 @@
 com\luv2code\adminservice\config\CorsConfig.class
 com\luv2code\adminservice\utils\ExtractJWT.class
+com\luv2code\adminservice\config\FeignConfig.class
 com\luv2code\adminservice\AdminServiceApplication.class
 com\luv2code\adminservice\controller\AdminController.class
+com\luv2code\adminservice\client\AuthUserClient.class

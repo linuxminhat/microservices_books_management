@@ -69,8 +69,6 @@ export default function AddNewBook() {
       console.log("API_BOOK:", API_BOOK);
       console.log("URL:", url);
       console.log("Payload:", book);
-
-      // Lấy token chuẩn
       const token = getToken();
       console.log("Token FE gửi lên Authorization:", token);
       if (!token) {
