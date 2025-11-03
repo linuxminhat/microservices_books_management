@@ -6,10 +6,13 @@ export async function POST(req: NextRequest) {
     const raw = await req.json();
     const email = (raw.email || '').trim();
     const password = (raw.password || '').trim();
+    //get full name 
     const fullName = (raw.fullName || raw.name || (email ? email.split('@')[0] : '')).trim();
+
     if (!email || !password) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
     }
+    //send res to backend 
     const res = await fetch(`${API_CONFIG.AUTH_SERVICE}/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

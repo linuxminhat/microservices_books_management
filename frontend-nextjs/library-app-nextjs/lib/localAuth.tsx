@@ -59,8 +59,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (res.ok) {
       const { user: userResp } = await res.json();
       console.log("DEBUG login BACKEND response:", userResp);
-
-      // Read token from httpOnly cookie via internal endpoint and persist for FE auth headers
       try {
         const tokenRes = await fetch('/api/auth/token', { credentials: 'include' });
         if (tokenRes.ok) {
@@ -71,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             sessionStorage.setItem('access_token', jwt);
           }
         }
-      } catch {}
+      } catch { }
 
       const userObj = {
         email: userResp.email,

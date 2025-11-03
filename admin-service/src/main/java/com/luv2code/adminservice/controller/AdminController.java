@@ -4,7 +4,6 @@ import com.luv2code.adminservice.client.AuthUserClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +13,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AdminController {
 
+    // Spring auto create Feign Client implementation
     private final AuthUserClient authUserClient;
 
     @GetMapping

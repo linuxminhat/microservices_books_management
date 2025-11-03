@@ -26,15 +26,16 @@ public class MessagesService {
         System.out.println("title: " + messageRequest.getTitle());
         System.out.println("question: " + messageRequest.getQuestion());
         System.out.println("========================");
-        
-        // Sử dụng constructor mới với userEmail
-        Message message = new Message(messageRequest.getTitle(), messageRequest.getQuestion(), userEmail);
+
+        Message message =
+                new Message(messageRequest.getTitle(), messageRequest.getQuestion(), userEmail);
         messageRepository.save(message);
-        
+
         System.out.println("Message saved with ID: " + message.getId());
     }
 
-    public void putMessage(AdminQuestionRequest adminQuestionRequest, String userEmail) throws Exception {
+    public void putMessage(AdminQuestionRequest adminQuestionRequest, String userEmail)
+            throws Exception {
         Optional<Message> message = messageRepository.findById(adminQuestionRequest.getId());
         if (!message.isPresent()) {
             throw new Exception("Message not found");

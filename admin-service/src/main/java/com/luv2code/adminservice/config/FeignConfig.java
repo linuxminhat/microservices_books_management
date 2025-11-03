@@ -14,8 +14,13 @@ public class FeignConfig {
     @Bean
     public RequestInterceptor authForwardInterceptor() {
         return (RequestTemplate template) -> {
+
+            // get current HTTP request context
             var attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            if (attrs == null) return;
+            if (attrs == null)
+                return;
+
+            // get original HTTP request
             HttpServletRequest request = attrs.getRequest();
             String auth = request.getHeader("Authorization");
             if (auth != null && !auth.isBlank()) {
@@ -24,4 +29,3 @@ public class FeignConfig {
         };
     }
 }
- 

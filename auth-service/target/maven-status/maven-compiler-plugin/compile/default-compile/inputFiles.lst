@@ -10,6 +10,7 @@ D:\fullstackproject\auth-service\src\main\java\com\luv2code\authservice\model\Us
 D:\fullstackproject\auth-service\src\main\java\com\luv2code\authservice\repository\UserRepository.java
 D:\fullstackproject\auth-service\src\main\java\com\luv2code\authservice\security\JwtAuthenticationFilter.java
 D:\fullstackproject\auth-service\src\main\java\com\luv2code\authservice\security\JwtUtil.java
+D:\fullstackproject\auth-service\src\main\java\com\luv2code\authservice\service\AdminUserService.java
 D:\fullstackproject\auth-service\src\main\java\com\luv2code\authservice\service\AuthService.java
 D:\fullstackproject\auth-service\src\main\java\com\luv2code\authservice\service\CustomUserDetailsService.java
 D:\fullstackproject\auth-service\src\main\java\com\luv2code\authservice\utils\ExtractJWT.java

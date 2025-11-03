@@ -7,6 +7,7 @@ import BookCheckoutPage from '@/components/BookCheckoutPage/BookCheckoutPage';
 
 export default function CheckoutPage() {
     const params = useParams() as { bookId: string };
+    //extract from url
     const bookId = params.bookId;
 
     return (

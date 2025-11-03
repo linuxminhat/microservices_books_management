@@ -11,10 +11,12 @@ public class ExtractJWT {
         token = token.replace("Bearer ", "");
 
         String[] chunks = token.split("\\.");
-        Base64.Decoder decoder = Base64.getUrlDecoder();
 
+        // decoded payload
+        Base64.Decoder decoder = Base64.getUrlDecoder();
         String payload = new String(decoder.decode(chunks[1]));
         String[] entries = payload.split(",");
+        // convert to key-value
         Map<String, String> map = new HashMap<String, String>();
 
         for (String entry : entries) {

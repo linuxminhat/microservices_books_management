@@ -16,7 +16,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Create admin demo
+        // admin
         if (!userRepository.existsByEmail("admin@cfc.com")) {
             User admin = new User();
             admin.setEmail("admin@cfc.com");
@@ -27,7 +27,7 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Created admin user: admin@cfc.com / 123456");
         }
 
-        // Create user demo
+        // user
         if (!userRepository.existsByEmail("user@cfc.com")) {
             User user = new User();
             user.setEmail("user@cfc.com");

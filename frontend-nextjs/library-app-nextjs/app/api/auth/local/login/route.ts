@@ -23,6 +23,6 @@ export async function POST(req: NextRequest) {
     }
 }
 
-// removed legacy local JWT generator; now proxying to auth-service
+
 
 

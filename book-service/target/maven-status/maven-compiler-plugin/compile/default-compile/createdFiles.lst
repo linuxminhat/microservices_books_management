@@ -7,6 +7,7 @@ com\luv2code\bookservice\responsemodels\ShelfCurrentLoansResponse.class
 com\luv2code\bookservice\entity\Checkout.class
 com\luv2code\bookservice\service\BookService.class
 com\luv2code\bookservice\config\CorsConfig.class
+com\luv2code\bookservice\config\CorsGlobalFilter.class
 com\luv2code\bookservice\entity\Book.class
 com\luv2code\bookservice\dao\HistoryRepository.class
 com\luv2code\bookservice\dao\BookRepository.class

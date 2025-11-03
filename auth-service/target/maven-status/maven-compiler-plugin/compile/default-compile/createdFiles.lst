@@ -1,5 +1,6 @@
 com\luv2code\authservice\security\JwtUtil.class
 com\luv2code\authservice\model\User$Role.class
+com\luv2code\authservice\service\AdminUserService.class
 com\luv2code\authservice\controller\AuthController$1.class
 com\luv2code\authservice\model\AuthResponse.class
 com\luv2code\authservice\AuthApplication.class

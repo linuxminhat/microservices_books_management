@@ -37,6 +37,7 @@ public class BookService {
 
         Optional<Book> book = bookRepository.findById(bookId);
 
+        // Check if user find book or not
         Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
 
         if (!book.isPresent() || validateCheckout != null || book.get().getCopiesAvailable() <= 0) {
@@ -46,6 +47,7 @@ public class BookService {
         book.get().setCopiesAvailable(book.get().getCopiesAvailable() - 1);
         bookRepository.save(book.get());
 
+        // create checkout record
         Checkout checkout = new Checkout(userEmail, LocalDate.now().toString(),
                 LocalDate.now().plusDays(7).toString(), book.get().getId());
 
@@ -104,11 +106,6 @@ public class BookService {
     }
 
     public void returnBook(String userEmail, Long bookId) throws Exception {
-        // Debug
-        System.out.println("=== RETURN BOOK DEBUG ===");
-        System.out.println("User Email: " + userEmail);
-        System.out.println("Book ID: " + bookId);
-
         Optional<Book> book = bookRepository.findById(bookId);
 
         if (!book.isPresent()) {
@@ -116,10 +113,7 @@ public class BookService {
             throw new Exception("Book does not exist. Book ID: " + bookId);
         }
 
-        System.out.println("=== BOOK FOUND: " + book.get().getTitle() + " ===");
-        System.out.println("=== BOOK IMAGE LENGTH: "
-                + (book.get().getImg() != null ? book.get().getImg().length() : "NULL") + " ===");
-
+        // get checkout to delete
         Checkout validateCheckout = checkoutRepository.findByUserEmailAndBookId(userEmail, bookId);
 
         if (validateCheckout == null) {
@@ -131,7 +125,7 @@ public class BookService {
         System.out.println("=== CHECKOUT FOUND: " + validateCheckout.getId() + " ===");
 
         try {
-            book.get().setCopiesAvailable(book.get().getCopiesAvailable() + 1); // SỬA DÒNG NÀY
+            book.get().setCopiesAvailable(book.get().getCopiesAvailable() + 1);
             bookRepository.save(book.get());
             checkoutRepository.deleteById(validateCheckout.getId());
 
@@ -175,8 +169,8 @@ public class BookService {
     }
 
     public void saveBook(Book book) {
-        // Nếu là sách mới (id null, hoặc copiesAvailable chưa hợp lệ), sync cho chuẩn:
-        if (book.getId() == null || book.getCopiesAvailable() < 0 || book.getCopiesAvailable() > book.getCopies()) {
+        if (book.getId() == null || book.getCopiesAvailable() < 0
+                || book.getCopiesAvailable() > book.getCopies()) {
             book.setCopiesAvailable(book.getCopies());
         }
         bookRepository.save(book);
