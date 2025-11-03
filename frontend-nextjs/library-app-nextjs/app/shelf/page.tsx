@@ -25,23 +25,23 @@ export default function ShelfPage() {
                                 <button onClick={() => setHistoryClick(false)} className='nav-link active' id='nav-loans-tab' data-bs-toggle='tab'
                                     data-bs-target='#nav-loans' type='button' role='tab' aria-controls='nav-loans'
                                     aria-selected='true'>
-                                        Loans
+                                    Loans
                                 </button>
-                                <button onClick={() => setHistoryClick(true)} className='nav-link' id='nav-history-tab' data-bs-toggle='tab' 
+                                <button onClick={() => setHistoryClick(true)} className='nav-link' id='nav-history-tab' data-bs-toggle='tab'
                                     data-bs-target='#nav-history' type='button' role='tab' aria-controls='nav-history'
                                     aria-selected='false'>
-                                        Your History
+                                    Your History
                                 </button>
                             </div>
                         </nav>
                         <div className='tab-content' id='nav-tabContent'>
                             <div className='tab-pane fade show active' id='nav-loans' role='tabpanel'
                                 aria-labelledby='nav-loans-tab'>
-                                    <Loans/>
+                                <Loans />
                             </div>
                             <div className='tab-pane fade' id='nav-history' role='tabpanel'
                                 aria-labelledby='nav-history-tab'>
-                                    {historyClick ? <HistoryPage/> : <></>}
+                                {historyClick ? <HistoryPage /> : <></>}
                             </div>
                         </div>
                     </div>

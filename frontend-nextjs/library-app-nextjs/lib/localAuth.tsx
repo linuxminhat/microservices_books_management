@@ -29,8 +29,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await fetch('/api/auth/local/me', { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
-        console.log("DEBUG login data:", data);
-
         const userObj = {
           email: data.email,
           name: data.fullName || data.name,

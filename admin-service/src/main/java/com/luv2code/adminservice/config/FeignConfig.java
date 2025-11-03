@@ -15,7 +15,6 @@ public class FeignConfig {
     public RequestInterceptor authForwardInterceptor() {
         return (RequestTemplate template) -> {
 
-            // get current HTTP request context
             var attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             if (attrs == null)
                 return;
